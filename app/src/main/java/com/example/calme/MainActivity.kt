@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,9 +46,34 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    showTasks(tasks)
+                    Column {
+                        navBar()
+                        showTasks(tasks)
+                    }
+
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun navBar(){
+    Row(modifier= Modifier){
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "Tasks")
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "ss1")
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "ss2")
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "ss3")
         }
     }
 }
@@ -80,12 +106,16 @@ fun showTask(task:Task) {
                 Row() {
                     Text(
                         text = task.getTitle1(),
-                        modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp).height(40.dp),
+                        modifier = Modifier
+                            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                            .height(40.dp),
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = task.getDate1().toString(),
-                        modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp).height(60.dp),
+                        modifier = Modifier
+                            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                            .height(60.dp),
                         fontWeight = FontWeight.Bold,
                     )
                 }
