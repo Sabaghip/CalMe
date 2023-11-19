@@ -84,6 +84,9 @@ fun initialize(array: ArrayList<Task>){
     array.add(Task("Eating", "Eat lunch before take a nap", Date(2023, 11, 19, 18, 23)))
     array.add(Task("Watching Tv", "Watch football game after nap.", Date(2023, 11, 19, 20, 23)))
     array.add(Task("Play Video Game", "play new Video Game which my friend bought for me.", Date(2023, 11, 19, 12, 23)))
+    array.add(Task("Eating", "Eat lunch before take a nap", Date(2023, 11, 19, 18, 23)))
+    array.add(Task("Watching Tv", "Watch football game after nap.", Date(2023, 11, 19, 20, 23)))
+    array.add(Task("Play Video Game", "play new Video Game which my friend bought for me.", Date(2023, 11, 19, 12, 23)))
 }
 
 @Composable
