@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.example.calme.Model.Task
 
 class TasksWindow {
+
     @Composable
     fun showTasks(array : ArrayList<Task>) {
         LazyColumn(modifier= Modifier.padding(top=10.dp)){
