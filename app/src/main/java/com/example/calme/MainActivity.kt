@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.calme.Model.Task
+import com.example.calme.TasksWindow.TasksWindow
 import com.example.calme.ui.theme.CalMeTheme
 import java.util.Date
 
@@ -41,6 +42,7 @@ class MainActivity : ComponentActivity() {
             CalMeTheme {
                 val tasks = ArrayList<Task>()
                 initialize(tasks);
+                val taskWindow = TasksWindow()
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -48,7 +50,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Column {
                         navBar()
-                        showTasks(tasks)
+                        taskWindow.showTasks(tasks)
                     }
 
                 }
@@ -84,53 +86,6 @@ fun initialize(array: ArrayList<Task>){
     array.add(Task("Play Video Game", "play new Video Game which my friend bought for me.", Date(2023, 11, 19, 12, 23)))
 }
 
-@Composable
-fun showTasks(array : ArrayList<Task>) {
-    LazyColumn(modifier= Modifier.padding(top=10.dp)){
-        items(array){item -> showTask(task = item)}
-    }
-}
-@Composable
-fun showTask(task:Task) {
-    Box(
-        modifier = Modifier
-            .padding(start = 10.dp, end = 10.dp)
-            .clip(RoundedCornerShape(20.dp))
-
-    ) {
-        Box(
-            modifier = Modifier.background(Color.Green)
-
-        ) {
-            Column {
-                Row() {
-                    Text(
-                        text = task.getTitle1(),
-                        modifier = Modifier
-                            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
-                            .height(40.dp),
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        text = task.getDate1().toString(),
-                        modifier = Modifier
-                            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
-                            .height(60.dp),
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-                Text(
-                    text = task.getDescription1(),
-                    modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
-                    fontSize = 13.sp,
-                )
-
-
-            }
-        }
-    }
-    Spacer(modifier = Modifier.height(15.dp))
-}
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
