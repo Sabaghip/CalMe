@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.calme.Utils.Tabs
 import java.util.Date
 
 val taskWindow = TasksWindow()
@@ -38,17 +39,17 @@ class MainActivity : ComponentActivity() {
             CalMeTheme {
                 val tasks = ArrayList<Task>()
                 initialize(tasks);
-                var tabState by remember { mutableStateOf("tasks") }
+                var tabState by remember { mutableStateOf(Tabs.Tasks) }
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Column {
-                        navBar(tabState, {tabState = "tasks"}, {tabState = "ss1"}, {tabState = "ss2"}, {tabState = "ss3"})
+                        navBar(tabState, {tabState = Tabs.Tasks}, {tabState = Tabs.Ss1}, {tabState = Tabs.Ss2}, {tabState = Tabs.Ss3})
                         when(tabState){
-                            "tasks" -> taskWindow.showTasks(tasks)
-                            "ss1" -> test()
+                            Tabs.Tasks -> taskWindow.showTasks(tasks)
+                            Tabs.Ss1 -> test()
                             else -> test()
                         }
 
@@ -60,21 +61,21 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun navBar(selected:String, onClickTasks:() -> Unit, onClickss1:() -> Unit, onClickss2:() -> Unit, onClickss3:() -> Unit){
+fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickss1:() -> Unit, onClickss2:() -> Unit, onClickss3:() -> Unit){
     Row(modifier= Modifier){
-        Button(onClick = onClickTasks, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected=="tasks") Color.Red else Color.Yellow))) {
+        Button(onClick = onClickTasks, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Tasks) Color.Red else Color.Yellow))) {
             Text(text = "Tasks")
         }
         Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickss1, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected=="ss1") Color.Red else Color.Yellow))) {
+        Button(onClick = onClickss1, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss1) Color.Red else Color.Yellow))) {
             Text(text = "ss1")
         }
         Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickss2, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected=="ss2") Color.Red else Color.Yellow))) {
+        Button(onClick = onClickss2, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss2) Color.Red else Color.Yellow))) {
             Text(text = "ss2")
         }
         Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickss3, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected=="ss3") Color.Red else Color.Yellow))) {
+        Button(onClick = onClickss3, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss3) Color.Red else Color.Yellow))) {
             Text(text = "ss3")
         }
     }
