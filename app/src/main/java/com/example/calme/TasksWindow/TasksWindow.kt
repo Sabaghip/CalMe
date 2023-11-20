@@ -1,7 +1,12 @@
 package com.example.calme.TasksWindow
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.widget.DatePicker
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -38,6 +44,7 @@ import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -46,6 +53,10 @@ import com.example.calme.Model.Task
 import com.example.calme.initialize
 import com.example.calme.navBar
 import com.example.calme.ui.theme.CalMeTheme
+import java.util.Calendar
+import java.util.Date
+import androidx.compose.material3.AlertDialog
+import androidx.compose.ui.window.DialogProperties
 
 class TasksWindow {
 
@@ -69,7 +80,7 @@ class TasksWindow {
                 Box(modifier = Modifier.padding(top=250.dp)) {
                     Box(
                         modifier = Modifier
-                            .height(250.dp)
+                            .height(350.dp)
                             .width(240.dp)
                             .background(Color(0xDDFF0000))
                             .padding(start = 10.dp, top = 10.dp)
@@ -95,6 +106,84 @@ class TasksWindow {
                                 label = { Text("Description") },
                                 placeholder = { Text("Description") },
                             )
+
+                            val mContext = LocalContext.current
+                            val mYear: Int
+                            val mMonth: Int
+                            val mDay: Int
+
+                            // Initializing a Calendar
+                            val mCalendar = Calendar.getInstance()
+
+                            // Fetching current year, month and day
+                            mYear = mCalendar.get(Calendar.YEAR)
+                            mMonth = mCalendar.get(Calendar.MONTH)
+                            mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+
+                            mCalendar.time = Date()
+
+                            // Declaring a string value to
+                            // store date in string format
+                            val mDate = remember { mutableStateOf("") }
+
+                            // Declaring DatePickerDialog and setting
+                            // initial values as current values (present year, month and day)
+                            val mDatePickerDialog = DatePickerDialog(
+                                mContext,
+                                { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+                                    mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
+                                }, mYear, mMonth, mDay
+                            )
+                            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+
+                                // Creating a button that on
+                                // click displays/shows the DatePickerDialog
+                                Button(onClick = {
+                                    mDatePickerDialog.show()
+                                }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF0F9D58)) ) {
+                                    Text(text = "Select Date", color = Color.White)
+                                }
+
+                                // Adding a space of 100dp height
+                                Spacer(modifier = Modifier.size(5.dp))
+
+                                // Displaying the mDate value in the Text
+                                Text(text = "Selected Date: ${mDate.value}", fontSize = 14.sp, textAlign = TextAlign.Center)
+
+
+                                val mContext = LocalContext.current
+
+                                // Declaring and initializing a calendar
+                                val mCalendar = Calendar.getInstance()
+                                val mHour = mCalendar[Calendar.HOUR_OF_DAY]
+                                val mMinute = mCalendar[Calendar.MINUTE]
+
+                                // Value for storing time as a string
+                                val mTime = remember { mutableStateOf("") }
+
+                                // Creating a TimePicker dialod
+                                val mTimePickerDialog = TimePickerDialog(
+                                    mContext,
+                                    {_, mHour : Int, mMinute: Int ->
+                                        mTime.value = "$mHour:$mMinute"
+                                    }, mHour, mMinute, false
+                                )
+
+                                Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+
+                                    // On button click, TimePicker is
+                                    // displayed, user can select a time
+                                    Button(onClick = { mTimePickerDialog.show() }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF0F9D58))) {
+                                        Text(text = "Select Time", color = Color.White)
+                                    }
+
+                                    // Add a spacer of 100dp
+                                    Spacer(modifier = Modifier.size(10.dp))
+
+                                    // Display selected time
+                                    Text(text = "Selected Time: ${mTime.value}", fontSize = 14.sp)
+                                }
+                            }
                         }
 
                     }
