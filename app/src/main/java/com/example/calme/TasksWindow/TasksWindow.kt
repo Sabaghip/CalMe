@@ -2,11 +2,12 @@ package com.example.calme.TasksWindow
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Build
 import android.widget.DatePicker
-import android.widget.TimePicker
-import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,12 +24,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -41,33 +43,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
-import com.example.calme.Model.Task
-import com.example.calme.initialize
-import com.example.calme.navBar
-
-import java.util.Calendar
-import java.util.Date
-import androidx.compose.material3.AlertDialog
-import androidx.compose.ui.window.DialogProperties
 import com.example.calme.MainActivity
-import com.example.calme.taskWindow
-import com.example.compose.md_theme_dark_primaryContainer
+import com.example.calme.Model.Task
 import com.example.compose.md_theme_light_background
-import com.example.compose.md_theme_light_onBackground
 import com.example.compose.md_theme_light_onPrimaryContainer
 import com.example.compose.md_theme_light_primary
 import com.example.compose.md_theme_light_primaryContainer
-import java.io.FileDescriptor
-import java.sql.Time
+import java.time.LocalDate
+import java.util.Calendar
+import java.util.Date
+
 
 class TasksWindow {
 
@@ -184,7 +174,9 @@ class TasksWindow {
                                     // Display selected time
                                     Text(text = "Selected Time: ${mDate.value}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
                                 }
-                                Row(modifier = Modifier.fillMaxSize().padding(start=30.dp)) {
+                                Row(modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(start = 30.dp)) {
 
                                     Button(onClick = { craeteState.value=false }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
                                         Text(text = "Back", color = Color.White)
@@ -236,6 +228,9 @@ class TasksWindow {
 
     @Composable
     fun ShowTask(task: Task) {
+        var expanded by remember {
+            mutableStateOf(false)
+        }
         Box(
             modifier = Modifier
                 .padding(start = 10.dp, end = 10.dp)
@@ -247,7 +242,7 @@ class TasksWindow {
 
             ) {
                 Column {
-                    Row() {
+                    Row(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = task.getTitle1(),
                             modifier = Modifier
@@ -256,21 +251,28 @@ class TasksWindow {
                             color=md_theme_light_onPrimaryContainer,
                             fontWeight = FontWeight.Bold,
                         )
+                        Spacer(modifier = Modifier.weight(1f))
+                        var date = task.getDate1().year.toString() + "-"+ task.getDate1().month.toString() + "-"+ task.getDate1().day.toString() + " "+ task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
                         Text(
-                            text = task.getDate1().toString(),
+                            text = date,
                             modifier = Modifier
                                 .padding(start = 10.dp, top = 10.dp, end = 10.dp)
                                 .height(60.dp),
                             color=md_theme_light_onPrimaryContainer,
                             fontWeight = FontWeight.Bold,
                         )
+                        IconButton(onClick = { expanded = !expanded}) {
+                            Icon(imageVector = Icons.Filled.Info, contentDescription = "show description")
+                        }
                     }
-                    Text(
-                        text = task.getDescription1(),
-                        modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
-                        color=md_theme_light_onPrimaryContainer,
-                        fontSize = 13.sp,
-                    )
+                    if(expanded) {
+                        Text(
+                            text = task.getDescription1(),
+                            modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
+                            color = md_theme_light_onPrimaryContainer,
+                            fontSize = 13.sp,
+                        )
+                    }
 
 
                 }
