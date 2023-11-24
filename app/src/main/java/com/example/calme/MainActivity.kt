@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.calme.Model.Task
 import com.example.calme.TasksWindow.TasksWindow
-import com.example.calme.ui.theme.CalMeTheme
 
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +32,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import com.example.calme.Utils.Tabs
+import com.example.compose.AppTheme
+import com.example.compose.md_theme_dark_tertiaryContainer
+import com.example.compose.md_theme_light_background
+import com.example.compose.md_theme_light_onTertiaryContainer
+import com.example.compose.md_theme_light_primary
+import com.example.compose.md_theme_light_tertiary
+import com.example.compose.md_theme_light_tertiaryContainer
 import java.util.Date
 
 val taskWindow = TasksWindow()
@@ -41,13 +47,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CalMeTheme {
+            AppTheme {
                 initialize();
                 var tabState by remember { mutableStateOf(Tabs.Tasks) }
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = md_theme_light_background
                 ) {
                     Column {
                         navBar(tabState, {tabState = Tabs.Tasks}, {tabState = Tabs.Ss1}, {tabState = Tabs.Ss2}, {tabState = Tabs.Ss3})
@@ -71,20 +77,20 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickss1:() -> Unit, onClickss2:() -> Unit, onClickss3:() -> Unit){
     Row(modifier= Modifier){
-        Button(onClick = onClickTasks, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Tasks) Color.Red else Color.Yellow))) {
-            Text(text = "Tasks")
+        Button(onClick = onClickTasks, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Tasks) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
+            Text(text = "Tasks", color = if(selected==Tabs.Tasks) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
         }
         Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickss1, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss1) Color.Red else Color.Yellow))) {
-            Text(text = "ss1")
+        Button(onClick = onClickss1, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss1) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
+            Text(text = "ss1", color = if(selected==Tabs.Ss1) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
         }
         Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickss2, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss2) Color.Red else Color.Yellow))) {
-            Text(text = "ss2")
+        Button(onClick = onClickss2, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss2) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
+            Text(text = "ss2", color = if(selected==Tabs.Ss2) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
         }
         Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickss3, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss3) Color.Red else Color.Yellow))) {
-            Text(text = "ss3")
+        Button(onClick = onClickss3, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss3) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
+            Text(text = "ss3", color = if(selected==Tabs.Ss3) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
         }
     }
 }
@@ -113,7 +119,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    CalMeTheme {
+    AppTheme {
         Greeting("Android")
     }
 }

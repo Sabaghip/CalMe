@@ -53,13 +53,19 @@ import androidx.compose.ui.window.PopupProperties
 import com.example.calme.Model.Task
 import com.example.calme.initialize
 import com.example.calme.navBar
-import com.example.calme.ui.theme.CalMeTheme
+
 import java.util.Calendar
 import java.util.Date
 import androidx.compose.material3.AlertDialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.calme.MainActivity
 import com.example.calme.taskWindow
+import com.example.compose.md_theme_dark_primaryContainer
+import com.example.compose.md_theme_light_background
+import com.example.compose.md_theme_light_onBackground
+import com.example.compose.md_theme_light_onPrimaryContainer
+import com.example.compose.md_theme_light_primary
+import com.example.compose.md_theme_light_primaryContainer
 import java.io.FileDescriptor
 import java.sql.Time
 
@@ -73,14 +79,14 @@ class TasksWindow {
             Surface(
                 modifier = Modifier
                     .fillMaxSize(),
-                color = Color(0xDDFF0000)
+                color = md_theme_light_background
             ){
                 Box(modifier = Modifier.padding(top=50.dp, start = 50.dp)) {
                     Box(
                         modifier = Modifier
                             .height(1000.dp)
                             .width(240.dp)
-                            .background(Color(0xDDFF0000))
+                            .background(md_theme_light_background)
                             .padding(start = 10.dp, top = 10.dp)
                     ) {
                         Column {
@@ -138,15 +144,12 @@ class TasksWindow {
                                 // click displays/shows the DatePickerDialog
                                 Button(onClick = {
                                     mDatePickerDialog.show()
-                                }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF0F9D58)) ) {
+                                }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary) ) {
                                     Text(text = "Select Date", color = Color.White)
                                 }
 
                                 // Adding a space of 100dp height
                                 Spacer(modifier = Modifier.size(5.dp))
-
-                                // Displaying the mDate value in the Text
-                                Text(text = "Selected Date: ${mDate.value}", fontSize = 14.sp, textAlign = TextAlign.Center)
 
 
                                 val mContext = LocalContext.current
@@ -171,7 +174,7 @@ class TasksWindow {
 
                                     // On button click, TimePicker is
                                     // displayed, user can select a time
-                                    Button(onClick = { mTimePickerDialog.show() }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF0F9D58))) {
+                                    Button(onClick = { mTimePickerDialog.show() }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
                                         Text(text = "Select Time", color = Color.White)
                                     }
 
@@ -179,17 +182,17 @@ class TasksWindow {
                                     Spacer(modifier = Modifier.size(10.dp))
 
                                     // Display selected time
-                                    Text(text = "Selected Time: ${mTime.value}", fontSize = 14.sp)
+                                    Text(text = "Selected Time: ${mDate.value}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
                                 }
-                                Row(modifier = Modifier.fillMaxSize().padding(start=20.dp)) {
+                                Row(modifier = Modifier.fillMaxSize().padding(start=30.dp)) {
 
-                                    Button(onClick = { craeteState.value=false }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF0F9D58))) {
+                                    Button(onClick = { craeteState.value=false }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
                                         Text(text = "Back", color = Color.White)
                                     }
 
                                     Spacer(modifier = Modifier.size(10.dp))
 
-                                    Button(enabled = title.text != "" && description.text != "" ,onClick = { craeteState.value=false;createTask(title=title.text, description=description.text, date=mDate.value) }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF0F9D58))) {
+                                    Button(enabled = title.text != "" && description.text != "" ,onClick = { craeteState.value=false;createTask(title=title.text, description=description.text, date=mDate.value) }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
                                         Text(text = "Add", color = Color.White)
                                     }
                                 }
@@ -240,7 +243,7 @@ class TasksWindow {
 
         ) {
             Box(
-                modifier = Modifier.background(Color.Green)
+                modifier = Modifier.background(md_theme_light_primaryContainer)
 
             ) {
                 Column {
@@ -250,6 +253,7 @@ class TasksWindow {
                             modifier = Modifier
                                 .padding(start = 10.dp, top = 10.dp, end = 10.dp)
                                 .height(40.dp),
+                            color=md_theme_light_onPrimaryContainer,
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
@@ -257,12 +261,14 @@ class TasksWindow {
                             modifier = Modifier
                                 .padding(start = 10.dp, top = 10.dp, end = 10.dp)
                                 .height(60.dp),
+                            color=md_theme_light_onPrimaryContainer,
                             fontWeight = FontWeight.Bold,
                         )
                     }
                     Text(
                         text = task.getDescription1(),
                         modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
+                        color=md_theme_light_onPrimaryContainer,
                         fontSize = 13.sp,
                     )
 
@@ -270,6 +276,6 @@ class TasksWindow {
                 }
             }
         }
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(10.dp))
     }
 }
