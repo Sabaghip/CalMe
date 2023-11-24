@@ -6,6 +6,7 @@ import android.widget.DatePicker
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,56 +58,53 @@ import java.util.Calendar
 import java.util.Date
 import androidx.compose.material3.AlertDialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.calme.MainActivity
+import com.example.calme.taskWindow
+import java.io.FileDescriptor
+import java.sql.Time
 
 class TasksWindow {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun showTasks(array : ArrayList<Task>) {
-        val popUpState = remember { mutableStateOf(false) }
-        Box() {
-            LazyColumn(modifier = Modifier
-                .padding(top = 10.dp)
-                .height(550.dp)) {
-                items(array) { item -> showTask(task = item) }
-            }
-        }
-
-        if(popUpState.value){
-            Popup(
-                alignment = Alignment.TopCenter,
-                properties = PopupProperties()
+        val craeteState = remember { mutableStateOf(false) }
+        if(craeteState.value){
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize(),
+                color = Color(0xDDFF0000)
             ){
-                Box(modifier = Modifier.padding(top=250.dp)) {
+                Box(modifier = Modifier.padding(top=50.dp, start = 50.dp)) {
                     Box(
                         modifier = Modifier
-                            .height(350.dp)
+                            .height(1000.dp)
                             .width(240.dp)
                             .background(Color(0xDDFF0000))
                             .padding(start = 10.dp, top = 10.dp)
                     ) {
                         Column {
+
                             var title by remember { mutableStateOf(TextFieldValue("")) }
                             var description by remember { mutableStateOf(TextFieldValue("")) }
                             TextField(
                                 value = title,
-                                onValueChange = { newValue -> title = newValue },
+                                onValueChange = { title = it },
                                 modifier = Modifier
                                     .padding(8.dp)
                                     .width(200.dp),
                                 label = { Text("Title") },
-                                placeholder = { Text("Title") },
+                                placeholder = { Text("title") },
                             )
                             TextField(
                                 value = description,
-                                onValueChange = { newValue -> description = newValue },
+                                onValueChange = { description = it },
                                 modifier = Modifier
                                     .padding(8.dp)
                                     .width(200.dp),
                                 label = { Text("Description") },
-                                placeholder = { Text("Description") },
+                                placeholder = { Text("description") },
                             )
-
                             val mContext = LocalContext.current
                             val mYear: Int
                             val mMonth: Int
@@ -124,14 +122,14 @@ class TasksWindow {
 
                             // Declaring a string value to
                             // store date in string format
-                            val mDate = remember { mutableStateOf("") }
+                            val mDate = remember { mutableStateOf(Date()) }
 
                             // Declaring DatePickerDialog and setting
                             // initial values as current values (present year, month and day)
                             val mDatePickerDialog = DatePickerDialog(
                                 mContext,
                                 { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-                                    mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
+                                    mDate.value = Date(mYear, mMonth, mDayOfMonth)
                                 }, mYear, mMonth, mDay
                             )
                             Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -165,11 +163,11 @@ class TasksWindow {
                                 val mTimePickerDialog = TimePickerDialog(
                                     mContext,
                                     {_, mHour : Int, mMinute: Int ->
-                                        mTime.value = "$mHour:$mMinute"
+                                        mDate.value=Date(mDate.value.year, mDate.value.month, mDate.value.day, mHour, mMinute)
                                     }, mHour, mMinute, false
                                 )
 
-                                Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                                Column(modifier = Modifier.height(150.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
 
                                     // On button click, TimePicker is
                                     // displayed, user can select a time
@@ -183,6 +181,18 @@ class TasksWindow {
                                     // Display selected time
                                     Text(text = "Selected Time: ${mTime.value}", fontSize = 14.sp)
                                 }
+                                Row(modifier = Modifier.fillMaxSize().padding(start=20.dp)) {
+
+                                    Button(onClick = { craeteState.value=false }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF0F9D58))) {
+                                        Text(text = "Back", color = Color.White)
+                                    }
+
+                                    Spacer(modifier = Modifier.size(10.dp))
+
+                                    Button(enabled = title.text != "" && description.text != "" ,onClick = { craeteState.value=false;createTask(title=title.text, description=description.text, date=mDate.value) }, colors = ButtonDefaults.buttonColors(containerColor = Color(0XFF0F9D58))) {
+                                        Text(text = "Add", color = Color.White)
+                                    }
+                                }
                             }
                         }
 
@@ -190,22 +200,39 @@ class TasksWindow {
                 }
             }
         }
-
-        Box(modifier = Modifier.fillMaxSize()) {
-            FloatingActionButton(
-                modifier = Modifier
-                    .padding(all = 16.dp)
-                    .align(alignment = Alignment.BottomEnd),
-                onClick = {
-                    popUpState.value = !popUpState.value
+        else {
+            Box() {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .height(550.dp)
+                ) {
+                    items(array) { item -> ShowTask(task = item) }
                 }
-            ) {
-                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
+            }
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .padding(all = 16.dp)
+                        .align(alignment = Alignment.BottomEnd),
+                    onClick = {
+                        craeteState.value = !craeteState.value
+                    }
+                ) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
+                }
             }
         }
     }
+
+    fun createTask(title:String, description:String, date:Date){
+        val newTask = Task(title=title, description=description, date=date)
+        MainActivity.tasks.add(newTask)
+    }
+
     @Composable
-    fun showTask(task: Task) {
+    fun ShowTask(task: Task) {
         Box(
             modifier = Modifier
                 .padding(start = 10.dp, end = 10.dp)
