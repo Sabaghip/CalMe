@@ -280,4 +280,14 @@ class TasksWindow {
         }
         Spacer(modifier = Modifier.height(10.dp))
     }
+
+    fun getTasksOfMonth(tasks:ArrayList<Task>, month:Int, year:Int):ArrayList<Task>{
+        val res = ArrayList<Task>()
+        for(task in tasks){
+            if(task.getDate1().month == month && task.getDate1().year == year){
+                res.add(task)
+            }
+        }
+        return res
+    }
 }
