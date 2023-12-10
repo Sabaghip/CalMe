@@ -131,7 +131,6 @@ class TasksWindow {
                                 }, mYear, mMonth, mDay
                             )
                             Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-
                                 // Creating a button that on
                                 // click displays/shows the DatePickerDialog
                                 Button(onClick = {
@@ -162,7 +161,7 @@ class TasksWindow {
                                     }, mHour, mMinute, false
                                 )
 
-                                Text(text = "Selected Time: ${mDate.value}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
+                                Text(text = "Selected Date: ${mDate.value.day}/${mDate.value.month}/${mDate.value.year}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
 
                                 Column(modifier = Modifier.height(150.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -176,7 +175,7 @@ class TasksWindow {
                                     Spacer(modifier = Modifier.size(10.dp))
 
                                     // Display selected time
-                                    Text(text = "Selected Time: ${mDate.value}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
+                                    Text(text = "Selected Time: ${mDate.value.hours}:${mDate.value.minutes}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
                                 }
                                 Row(modifier = Modifier
                                     .fillMaxSize()
