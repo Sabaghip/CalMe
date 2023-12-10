@@ -24,26 +24,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.calme.MainActivity.Companion.tasks
 import com.example.calme.Model.Task
 import com.example.calme.TasksWindow.TasksWindow
 import com.example.calme.Utils.Tabs
 import com.example.compose.AppTheme
-import com.example.compose.md_theme_light_background
 import com.example.compose.md_theme_light_tertiary
 import com.example.compose.md_theme_light_tertiaryContainer
 import java.util.Calendar
 import java.util.Date
-import kotlin.system.exitProcess
 
 
 val taskWindow = TasksWindow()
