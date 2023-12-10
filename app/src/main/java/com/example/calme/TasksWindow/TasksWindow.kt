@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -230,7 +231,11 @@ class TasksWindow {
     @Composable
     fun ShowTaskInCalender(task: Task, onBackClicked:()-> Unit) {
         Column {
-
+            Row() {
+                Button(onClick = onBackClicked) {
+                    Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
+                }
+            }
             Box(
                 modifier = Modifier.background(md_theme_light_primaryContainer)
 
@@ -267,9 +272,6 @@ class TasksWindow {
             }
             Row {
                 Spacer(modifier = Modifier.weight(1f))
-                Button(onClick = onBackClicked){
-                    Text(text = "Back")
-                }
             }
         }
 
