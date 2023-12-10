@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -156,7 +157,7 @@ class TasksWindow {
                                 val mTimePickerDialog = TimePickerDialog(
                                     mContext,
                                     {_, mHour : Int, mMinute: Int ->
-                                        mDate.value=Date(mDate.value.year, mDate.value.month, mDate.value.day, mHour, mMinute)
+                                        mDate.value=Date(mDate.value.year, mDate.value.month, mDate.value.date, mHour, mMinute)
                                     }, mHour, mMinute, false
                                 )
 
@@ -227,6 +228,53 @@ class TasksWindow {
     }
 
     @Composable
+    fun ShowTaskInCalender(task: Task, onBackClicked:()-> Unit) {
+        Column {
+
+            Box(
+                modifier = Modifier.background(md_theme_light_primaryContainer)
+
+            ) {
+                Column {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = task.getTitle1(),
+                            modifier = Modifier
+                                .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                                .height(40.dp),
+                            color = md_theme_light_onPrimaryContainer,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        var date =
+                            task.getDate1().year.toString() + "-" + task.getDate1().month.toString() + "-" + task.getDate1().date.toString() + " " + task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
+                        Text(
+                            text = date,
+                            modifier = Modifier
+                                .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                                .height(60.dp),
+                            color = md_theme_light_onPrimaryContainer,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                    Text(
+                        text = task.getDescription1(),
+                        modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
+                        color = md_theme_light_onPrimaryContainer,
+                        fontSize = 13.sp,
+                    )
+                }
+            }
+            Row {
+                Spacer(modifier = Modifier.weight(1f))
+                Button(onClick = onBackClicked){
+                    Text(text = "Back")
+                }
+            }
+        }
+
+    }
+    @Composable
     fun ShowTask(task: Task) {
         var expanded by remember {
             mutableStateOf(false)
@@ -252,7 +300,7 @@ class TasksWindow {
                             fontWeight = FontWeight.Bold,
                         )
                         Spacer(modifier = Modifier.weight(1f))
-                        var date = task.getDate1().year.toString() + "-"+ task.getDate1().month.toString() + "-"+ task.getDate1().day.toString() + " "+ task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
+                        var date = task.getDate1().year.toString() + "-"+ task.getDate1().month.toString() + "-"+ task.getDate1().date.toString() + " "+ task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
                         Text(
                             text = date,
                             modifier = Modifier
@@ -280,14 +328,14 @@ class TasksWindow {
         }
         Spacer(modifier = Modifier.height(10.dp))
     }
-
+    @Composable
     fun getTasksOfMonth(tasks:ArrayList<Task>, month:Int, year:Int):ArrayList<Task>{
         val res = ArrayList<Task>()
-        for(task in tasks){
-            if(task.getDate1().month == month && task.getDate1().year == year){
-                res.add(task)
+            for (task in tasks) {
+                if (task.getDate1().month == month && task.getDate1().year == year) {
+                    res.add(task)
+                }
             }
-        }
         return res
     }
 }
