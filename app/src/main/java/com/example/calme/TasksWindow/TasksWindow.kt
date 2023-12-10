@@ -162,6 +162,8 @@ class TasksWindow {
                                     }, mHour, mMinute, false
                                 )
 
+                                Text(text = "Selected Time: ${mDate.value}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
+
                                 Column(modifier = Modifier.height(150.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
 
                                     // On button click, TimePicker is
@@ -252,7 +254,7 @@ class TasksWindow {
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         var date =
-                            task.getDate1().year.toString() + "-" + task.getDate1().month.toString() + "-" + task.getDate1().date.toString() + " " + task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
+                            task.getDate1().year.toString() + "-" + (task.getDate1().month + 1).toString() + "-" + task.getDate1().date.toString() + " " + task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
                         Text(
                             text = date,
                             modifier = Modifier
@@ -302,7 +304,7 @@ class TasksWindow {
                             fontWeight = FontWeight.Bold,
                         )
                         Spacer(modifier = Modifier.weight(1f))
-                        var date = task.getDate1().year.toString() + "-"+ task.getDate1().month.toString() + "-"+ task.getDate1().date.toString() + " "+ task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
+                        var date = task.getDate1().year.toString() + "-"+ (task.getDate1().month+1).toString() + "-"+ task.getDate1().date.toString() + " "+ task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
                         Text(
                             text = date,
                             modifier = Modifier

@@ -2,7 +2,7 @@ package com.example.calme.Utils
 
 enum class Tabs {
     Tasks,
-    Ss1,
+    Calender,
     Ss2,
     Ss3
 }

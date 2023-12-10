@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -33,6 +34,7 @@ import com.example.calme.Model.Task
 import com.example.calme.TasksWindow.TasksWindow
 import com.example.calme.Utils.Tabs
 import com.example.compose.AppTheme
+import com.example.compose.md_theme_light_background
 import com.example.compose.md_theme_light_tertiary
 import com.example.compose.md_theme_light_tertiaryContainer
 import java.util.Calendar
@@ -40,7 +42,8 @@ import java.util.Date
 
 
 val taskWindow = TasksWindow()
-var taskToShow = Task("tt", "dd", Date())
+val customCalender = CustomCalender()
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,30 +51,22 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 initialize();
-                val shouldShowTask = remember { mutableStateOf(false) }
-                if(!shouldShowTask.value) {
-                    Calender(Date(), onShowTaskClicked = { shouldShowTask.value = true })
-                }
-                else{
-                    taskWindow.ShowTaskInCalender(task = taskToShow, onBackClicked = {shouldShowTask.value = false})
-                }
-
-                //var tabState by remember { mutableStateOf(Tabs.Tasks) }
+                var tabState by remember { mutableStateOf(Tabs.Tasks) }
                 // A surface container using the 'background' color from the theme
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = md_theme_light_background
-//                ) {
-//                    Column {
-//                        navBar(tabState, {tabState = Tabs.Tasks}, {tabState = Tabs.Ss1}, {tabState = Tabs.Ss2}, {tabState = Tabs.Ss3})
-//                        when(tabState){
-//                            Tabs.Tasks -> taskWindow.showTasks(MainActivity.tasks)
-//                            Tabs.Ss1 -> test()
-//                            else -> test()
-//                        }
-//
-//                    }
-//                }
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = md_theme_light_background
+                ) {
+                    Column {
+                        navBar(tabState, {tabState = Tabs.Tasks}, {tabState = Tabs.Calender}, {tabState = Tabs.Ss2}, {tabState = Tabs.Ss3})
+                        when(tabState){
+                            Tabs.Tasks -> taskWindow.showTasks(MainActivity.tasks)
+                            Tabs.Calender -> customCalender.runCalender()
+                            else -> test()
+                        }
+
+                    }
+                }
             }
         }
     }
@@ -81,98 +76,17 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Calender(date : Date, onShowTaskClicked:()->Unit){
-    val calendar = Calendar.getInstance();
-    val month = calendar.get(Calendar.MONTH)
-    val year = calendar.get(Calendar.YEAR)
-    val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-    val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-    val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-    var backwardForFirstDayInWeek = dayOfWeek - ((dayOfMonth - 1)%7)
-    if (backwardForFirstDayInWeek < 0){
-        backwardForFirstDayInWeek = backwardForFirstDayInWeek + 7
-    }
-    var flag = false
-    var z = 1
-    val tasksOfMonth = taskWindow.getTasksOfMonth(tasks, month, year)
-    val daysWithTask = daysHaveTask(tasksOfMonth)
-    Column {
-    Row {
-        Spacer(modifier = Modifier.width(9.dp))
-        Text(text = "Sat")
-        Spacer(modifier = Modifier.width(18.dp))
-        Text(text = "Sun")
-        Spacer(modifier = Modifier.width(18.dp))
-        Text(text = "Mon")
-        Spacer(modifier = Modifier.width(18.dp))
-        Text(text = "Tue")
-        Spacer(modifier = Modifier.width(18.dp))
-        Text(text = "Wed")
-        Spacer(modifier = Modifier.width(18.dp))
-        Text(text = "Thu")
-        Spacer(modifier = Modifier.width(18.dp))
-        Text(text = "Fri")
-    }
-            for(i in 0..5){
-                Row {
-                    for(j in 0..6){
-                        if(j==backwardForFirstDayInWeek){
-                            flag = true
-                        }
-                        if(flag && z < daysInMonth) {
-                            xxxx(onShowTaskClicked=onShowTaskClicked, z=z, daysWithTask = daysWithTask, tasksOfMonth = tasksOfMonth)
-                            z += 1
-                        }
-                        else{
-                            Box(
-                                modifier = Modifier
-                                    .height(46.dp)
-                                    .width(46.dp)
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0x11111111))
-                                    .clickable { /*TODO*/ },
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(2.dp))
-                    }
-                }
-            }
 
-        }
-}
 
-fun daysHaveTask(tasks : ArrayList<Task>):ArrayList<Int>{
-    val res = ArrayList<Int>()
-    for(task in tasks){
-        res.add(task.getDate1().date)
-    }
-    return res
-}
-fun getTaskOfDay(day:Int, tasks:ArrayList<Task>):Task{
-    for(task in tasks){
-        if(task.getDate1().date == day){
-            return task
-        }
-    }
-    return Task("title", "desc", Date())
-}
-fun getTaskOfDay(tasks : ArrayList<Task>):ArrayList<Int>{
-    val res = ArrayList<Int>()
-    for(task in tasks){
-        res.add(task.getDate1().date)
-    }
-    return res
-}
 @Composable
-fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickss1:() -> Unit, onClickss2:() -> Unit, onClickss3:() -> Unit){
+fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickCalender:() -> Unit, onClickss2:() -> Unit, onClickss3:() -> Unit){
     Row(modifier= Modifier){
         Button(onClick = onClickTasks, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Tasks) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
             Text(text = "Tasks", color = if(selected==Tabs.Tasks) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
         }
         Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickss1, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss1) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
-            Text(text = "ss1", color = if(selected==Tabs.Ss1) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
+        Button(onClick = onClickCalender, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Calender) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
+            Text(text = "Calender", color = if(selected==Tabs.Calender) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
         }
         Spacer(modifier = Modifier.width(10.dp))
         Button(onClick = onClickss2, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss2) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
@@ -199,39 +113,3 @@ fun initialize(){
 fun test(){
     }
 
-@Composable
-fun xxxx(z:Int, daysWithTask:ArrayList<Int>, tasksOfMonth : ArrayList<Task>, onShowTaskClicked:()->Unit){
-    Box(
-        modifier = Modifier
-            .height(46.dp)
-            .width(46.dp)
-            .clip(RoundedCornerShape(15.dp))
-            .background(
-                if (z in daysWithTask) {
-                    Color(0x777777FF)
-                } else {
-                    Color(0x77777777)
-                }
-            )
-            .clickable {
-                if (z in daysWithTask) {
-                    taskToShow = getTaskOfDay(
-                        day = z,
-                        tasks = tasksOfMonth
-                    )
-                    onShowTaskClicked()
-                }
-            },
-    ){
-        Text(
-            text = "$z",
-            modifier = Modifier.padding(
-                start = 8.dp,
-                end = 0.dp,
-                top = 8.dp,
-                bottom = 0.dp
-            )
-        )
-
-    }
-}
