@@ -230,52 +230,28 @@ class TasksWindow {
     }
 
     @Composable
-    fun ShowTaskInCalender(task: Task, onBackClicked:()-> Unit) {
+    fun ShowTasksInCalender(tasks: ArrayList<Task>, onBackClicked:()-> Unit) {
         Column {
             Row() {
                 Button(onClick = onBackClicked) {
                     Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = "Back")
                 }
             }
-            Box(
-                modifier = Modifier.background(md_theme_light_primaryContainer)
-
-            ) {
-                Column {
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = task.getTitle1(),
-                            modifier = Modifier
-                                .padding(start = 10.dp, top = 10.dp, end = 10.dp)
-                                .height(40.dp),
-                            color = md_theme_light_onPrimaryContainer,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        var date =
-                            task.getDate1().year.toString() + "-" + (task.getDate1().month + 1).toString() + "-" + task.getDate1().date.toString() + " " + task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
-                        Text(
-                            text = date,
-                            modifier = Modifier
-                                .padding(start = 10.dp, top = 10.dp, end = 10.dp)
-                                .height(60.dp),
-                            color = md_theme_light_onPrimaryContainer,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                    Text(
-                        text = task.getDescription1(),
-                        modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
-                        color = md_theme_light_onPrimaryContainer,
-                        fontSize = 13.sp,
-                    )
-                }
-            }
-            Row {
+            Row() {
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = "Tasks of ${tasks[0].getDate1().date}/${tasks[0].getDate1().month}/${tasks[0].getDate1().year}", fontSize = 20.sp)
                 Spacer(modifier = Modifier.weight(1f))
             }
+            Box() {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .height(550.dp)
+                ) {
+                    items(tasks) { item -> ShowTask(task = item) }
+                }
+            }
         }
-
     }
     @Composable
     fun ShowTask(task: Task) {
