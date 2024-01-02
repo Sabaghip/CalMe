@@ -319,7 +319,7 @@ class TasksWindow {
 
         ) {
             Box(
-                modifier = Modifier.background(if(task.isDone1()) Color(0xFF008000) else if (task.isExpired()) Color(0xFF800000) else md_theme_light_primaryContainer)
+                modifier = Modifier.background(if(task.isDone1()) Color(0xFF008000) else if (task.isExpired()) Color(0xFFFF0000) else md_theme_light_primaryContainer)
 
             ) {
                 Column {
@@ -360,7 +360,7 @@ class TasksWindow {
                             )
                             Row{
                                 Spacer(modifier = Modifier.weight(1f))
-                                IconButton(onClick = { task.makeDone() }) {
+                                IconButton(onClick = { task.makeDone();expanded = false; expanded=true }) {
                                     Icon(
                                         imageVector = Icons.Filled.Done,
                                         contentDescription = "show description"
