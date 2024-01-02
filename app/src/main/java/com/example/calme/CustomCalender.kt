@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.calme.Model.Task
 import java.util.Calendar
 import java.util.Date
@@ -26,18 +27,12 @@ import java.util.Date
 var tasksToShow = ArrayList<Task>()
 class CustomCalender {
     @Composable
-    fun runCalender(){
-        val shouldShowTask = remember { mutableStateOf(false) }
-        if(!shouldShowTask.value) {
-            Calender(Date(), onShowTaskClicked = { shouldShowTask.value = true })
-        }
-        else{
-            taskWindow.ShowTasksInCalender(tasks = tasksToShow, onBackClicked = {shouldShowTask.value = false})
-        }
+    fun runCalender(navContrller : NavController){
+            Calender(Date(), navContrller = navContrller)
     }
 
     @Composable
-    fun Calender(date : Date, onShowTaskClicked:()->Unit){
+    fun Calender(date : Date, navContrller:NavController){
         val calendar = Calendar.getInstance();
         val month = calendar.get(Calendar.MONTH)
         val year = calendar.get(Calendar.YEAR)
@@ -82,7 +77,7 @@ class CustomCalender {
                             flag = true
                         }
                         if(flag && z < daysInMonth) {
-                            showDayOnCalender(onShowTaskClicked=onShowTaskClicked, z=z, daysWithTask = daysWithTask, tasksOfMonth = tasksOfMonth)
+                            showDayOnCalender(z=z, daysWithTask = daysWithTask, tasksOfMonth = tasksOfMonth, navContrller=navContrller)
                             z += 1
                         }
                         else{
@@ -120,14 +115,6 @@ class CustomCalender {
         return res
     }
 
-    fun getTaskOfDay(tasks : ArrayList<Task>):ArrayList<Int>{
-        val res = ArrayList<Int>()
-        for(task in tasks){
-            res.add(task.getDate1().date)
-        }
-        return res
-    }
-
     fun getMonthName(month:Int):String{
         when(month){
             0 -> return "January"
@@ -147,7 +134,7 @@ class CustomCalender {
     }
 
     @Composable
-    fun showDayOnCalender(z:Int, daysWithTask:ArrayList<Int>, tasksOfMonth : ArrayList<Task>, onShowTaskClicked:()->Unit){
+    fun showDayOnCalender(z:Int, daysWithTask:ArrayList<Int>, tasksOfMonth : ArrayList<Task>, navContrller:NavController){
         Box(
             modifier = Modifier
                 .height(46.dp)
@@ -166,7 +153,7 @@ class CustomCalender {
                             day = z,
                             tasks = tasksOfMonth
                         )
-                        onShowTaskClicked()
+                        navContrller.navigate("showTaskInCalender")
                     }
                 },
         ){

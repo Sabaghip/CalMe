@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
+import android.util.Log
 import android.widget.DatePicker
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,167 +61,33 @@ import com.example.compose.md_theme_light_primaryContainer
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
+import kotlin.system.exitProcess
 
 
 class TasksWindow {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun showTasks(array : ArrayList<Task>) {
-        val craeteState = remember { mutableStateOf(false) }
-        if(craeteState.value){
-            Surface(
+    fun showTasks(array : ArrayList<Task>, onClickCreate:()->Unit) {
+        Box() {
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize(),
-                color = md_theme_light_background
-            ){
-                Box(modifier = Modifier.padding(top=50.dp, start = 50.dp)) {
-                    Box(
-                        modifier = Modifier
-                            .height(1000.dp)
-                            .width(240.dp)
-                            .background(md_theme_light_background)
-                            .padding(start = 10.dp, top = 10.dp)
-                    ) {
-                        Column {
-
-                            var title by remember { mutableStateOf(TextFieldValue("")) }
-                            var description by remember { mutableStateOf(TextFieldValue("")) }
-                            TextField(
-                                value = title,
-                                onValueChange = { title = it },
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .width(200.dp),
-                                label = { Text("Title") },
-                                placeholder = { Text("title") },
-                            )
-                            TextField(
-                                value = description,
-                                onValueChange = { description = it },
-                                modifier = Modifier
-                                    .padding(8.dp)
-                                    .width(200.dp),
-                                label = { Text("Description") },
-                                placeholder = { Text("description") },
-                            )
-                            val mContext = LocalContext.current
-                            val mYear: Int
-                            val mMonth: Int
-                            val mDay: Int
-
-                            // Initializing a Calendar
-                            val mCalendar = Calendar.getInstance()
-
-                            // Fetching current year, month and day
-                            mYear = mCalendar.get(Calendar.YEAR)
-                            mMonth = mCalendar.get(Calendar.MONTH)
-                            mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
-
-                            mCalendar.time = Date()
-
-                            // Declaring a string value to
-                            // store date in string format
-                            val mDate = remember { mutableStateOf(Date()) }
-
-                            // Declaring DatePickerDialog and setting
-                            // initial values as current values (present year, month and day)
-                            val mDatePickerDialog = DatePickerDialog(
-                                mContext,
-                                { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-                                    mDate.value = Date(mYear, mMonth, mDayOfMonth)
-                                }, mYear, mMonth, mDay
-                            )
-                            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-                                // Creating a button that on
-                                // click displays/shows the DatePickerDialog
-                                Button(onClick = {
-                                    mDatePickerDialog.show()
-                                }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary) ) {
-                                    Text(text = "Select Date", color = Color.White)
-                                }
-
-                                // Adding a space of 100dp height
-                                Spacer(modifier = Modifier.size(5.dp))
-
-
-                                val mContext = LocalContext.current
-
-                                // Declaring and initializing a calendar
-                                val mCalendar = Calendar.getInstance()
-                                val mHour = mCalendar[Calendar.HOUR_OF_DAY]
-                                val mMinute = mCalendar[Calendar.MINUTE]
-
-                                // Value for storing time as a string
-                                val mTime = remember { mutableStateOf("") }
-
-                                // Creating a TimePicker dialod
-                                val mTimePickerDialog = TimePickerDialog(
-                                    mContext,
-                                    {_, mHour : Int, mMinute: Int ->
-                                        mDate.value=Date(mDate.value.year, mDate.value.month, mDate.value.date, mHour, mMinute)
-                                    }, mHour, mMinute, false
-                                )
-
-                                Text(text = "Selected Date: ${mDate.value.day}/${mDate.value.month}/${mDate.value.year}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
-
-                                Column(modifier = Modifier.height(150.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-
-                                    // On button click, TimePicker is
-                                    // displayed, user can select a time
-                                    Button(onClick = { mTimePickerDialog.show() }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
-                                        Text(text = "Select Time", color = Color.White)
-                                    }
-
-                                    // Add a spacer of 100dp
-                                    Spacer(modifier = Modifier.size(10.dp))
-
-                                    // Display selected time
-                                    Text(text = "Selected Time: ${mDate.value.hours}:${mDate.value.minutes}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
-                                }
-                                Row(modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(start = 30.dp)) {
-
-                                    Button(onClick = { craeteState.value=false }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
-                                        Text(text = "Back", color = Color.White)
-                                    }
-
-                                    Spacer(modifier = Modifier.size(10.dp))
-
-                                    Button(enabled = title.text != "" && description.text != "" ,onClick = { craeteState.value=false;createTask(title=title.text, description=description.text, date=mDate.value) }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
-                                        Text(text = "Add", color = Color.White)
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                }
+                    .padding(top = 10.dp)
+                    .height(550.dp)
+            ) {
+                items(array) { item -> ShowTask(task = item) }
             }
         }
-        else {
-            Box() {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .height(550.dp)
-                ) {
-                    items(array) { item -> ShowTask(task = item) }
+        Box(modifier = Modifier.fillMaxSize()) {
+            FloatingActionButton(
+                modifier = Modifier
+                    .padding(all = 16.dp)
+                    .align(alignment = Alignment.BottomEnd),
+                onClick = {
+                    onClickCreate()
                 }
-            }
-
-            Box(modifier = Modifier.fillMaxSize()) {
-                FloatingActionButton(
-                    modifier = Modifier
-                        .padding(all = 16.dp)
-                        .align(alignment = Alignment.BottomEnd),
-                    onClick = {
-                        craeteState.value = !craeteState.value
-                    }
-                ) {
-                    Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
-                }
+            ) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
             }
         }
     }
@@ -229,6 +97,138 @@ class TasksWindow {
         MainActivity.tasks.add(newTask)
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun CreateTaskTab(onBackClicked:()-> Unit){
+        Surface(
+            modifier = Modifier
+                .fillMaxSize(),
+            color = md_theme_light_background
+        ){
+            Box(modifier = Modifier.padding(top=50.dp, start = 50.dp)) {
+                Box(
+                    modifier = Modifier
+                        .height(1000.dp)
+                        .width(240.dp)
+                        .background(md_theme_light_background)
+                        .padding(start = 10.dp, top = 10.dp)
+                ) {
+                    Column {
+
+                        var title by remember { mutableStateOf(TextFieldValue("")) }
+                        var description by remember { mutableStateOf(TextFieldValue("")) }
+                        TextField(
+                            value = title,
+                            onValueChange = { title = it },
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .width(200.dp),
+                            label = { Text("Title") },
+                            placeholder = { Text("title") },
+                        )
+                        TextField(
+                            value = description,
+                            onValueChange = { description = it },
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .width(200.dp),
+                            label = { Text("Description") },
+                            placeholder = { Text("description") },
+                        )
+                        val mContext = LocalContext.current
+                        val mYear: Int
+                        val mMonth: Int
+                        val mDay: Int
+
+                        // Initializing a Calendar
+                        val mCalendar = Calendar.getInstance()
+
+                        // Fetching current year, month and day
+                        mYear = mCalendar.get(Calendar.YEAR)
+                        mMonth = mCalendar.get(Calendar.MONTH)
+                        mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+
+                        mCalendar.time = Date()
+
+                        // Declaring a string value to
+                        // store date in string format
+                        val mDate = remember { mutableStateOf(Date()) }
+
+                        // Declaring DatePickerDialog and setting
+                        // initial values as current values (present year, month and day)
+                        val mDatePickerDialog = DatePickerDialog(
+                            mContext,
+                            { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+                                mDate.value = Date(mYear, mMonth, mDayOfMonth)
+                            }, mYear, mMonth, mDay
+                        )
+                        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                            // Creating a button that on
+                            // click displays/shows the DatePickerDialog
+                            Button(onClick = {
+                                mDatePickerDialog.show()
+                            }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary) ) {
+                                Text(text = "Select Date", color = Color.White)
+                            }
+
+                            // Adding a space of 100dp height
+                            Spacer(modifier = Modifier.size(5.dp))
+
+
+                            val mContext = LocalContext.current
+
+                            // Declaring and initializing a calendar
+                            val mCalendar = Calendar.getInstance()
+                            val mHour = mCalendar[Calendar.HOUR_OF_DAY]
+                            val mMinute = mCalendar[Calendar.MINUTE]
+
+                            // Value for storing time as a string
+                            val mTime = remember { mutableStateOf("") }
+
+                            // Creating a TimePicker dialod
+                            val mTimePickerDialog = TimePickerDialog(
+                                mContext,
+                                {_, mHour : Int, mMinute: Int ->
+                                    mDate.value=Date(mDate.value.year, mDate.value.month, mDate.value.date, mHour, mMinute)
+                                }, mHour, mMinute, false
+                            )
+                            Text(text = "Selected Date: ${mDate.value.date}/${mDate.value.month + 1}/${mDate.value.year}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
+
+                            Column(modifier = Modifier.height(150.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+
+                                // On button click, TimePicker is
+                                // displayed, user can select a time
+                                Button(onClick = { mTimePickerDialog.show() }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
+                                    Text(text = "Select Time", color = Color.White)
+                                }
+
+                                // Add a spacer of 100dp
+                                Spacer(modifier = Modifier.size(10.dp))
+
+                                // Display selected time
+                                Text(text = "Selected Time: ${mDate.value.hours}:${mDate.value.minutes}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
+                            }
+                            Row(modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 30.dp)) {
+
+                                Button(onClick = { onBackClicked() }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
+                                    Text(text = "Back", color = Color.White)
+                                }
+
+                                Spacer(modifier = Modifier.size(10.dp))
+
+                                Button(enabled = title.text != "" && description.text != "" ,onClick = { createTask(title=title.text, description=description.text, date=mDate.value);onBackClicked() }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
+                                    Text(text = "Add", color = Color.White)
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
     @Composable
     fun ShowTasksInCalender(tasks: ArrayList<Task>, onBackClicked:()-> Unit) {
         Column {

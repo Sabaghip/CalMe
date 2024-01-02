@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.calme.MainActivity.Companion.tasks
 import com.example.calme.Model.Task
 import com.example.calme.TasksWindow.TasksWindow
@@ -39,10 +40,14 @@ import com.example.compose.md_theme_light_tertiary
 import com.example.compose.md_theme_light_tertiaryContainer
 import java.util.Calendar
 import java.util.Date
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 
 val taskWindow = TasksWindow()
 val customCalender = CustomCalender()
+val customWeekly = CustomWeekly()
 
 
 class MainActivity : ComponentActivity() {
@@ -51,21 +56,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 initialize();
-                var tabState by remember { mutableStateOf(Tabs.Tasks) }
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = md_theme_light_background
                 ) {
-                    Column {
-                        navBar(tabState, {tabState = Tabs.Tasks}, {tabState = Tabs.Calender}, {tabState = Tabs.Ss2}, {tabState = Tabs.Ss3})
-                        when(tabState){
-                            Tabs.Tasks -> taskWindow.showTasks(MainActivity.tasks)
-                            Tabs.Calender -> customCalender.runCalender()
-                            else -> test()
-                        }
-
-                    }
+                    runApp()
                 }
             }
         }
@@ -79,7 +74,43 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickCalender:() -> Unit, onClickss2:() -> Unit, onClickss3:() -> Unit){
+fun runApp(){
+    var tabState by remember { mutableStateOf(Tabs.Tasks) }
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") {
+            Column {
+                navBar(selected =  Tabs.Tasks,onClickTasks= {tabState = Tabs.Tasks}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")})
+                taskWindow.showTasks(MainActivity.tasks, onClickCreate = {navController.navigate("create")})
+            }
+        }
+        composable("calender") {
+            navBar(selected=Tabs.Calender, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender =  {tabState = Tabs.Calender}, onClickWeekly =  {tabState = Tabs.Weekly;navController.navigate("weekly")})
+            customCalender.runCalender(navContrller = navController)
+        }
+        composable("weekly") {
+            navBar(selected=Tabs.Weekly, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender =  {tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly =  {tabState = Tabs.Weekly})
+            customWeekly.runWeekly(navController = navController)
+        }
+        composable("create") {
+            Column {
+                taskWindow.CreateTaskTab(onBackClicked = {navController.navigate("home")})
+            }
+        }
+        composable("showTaskInCalender") {
+            Column {
+                taskWindow.ShowTasksInCalender(tasks = tasksToShow, onBackClicked = {navController.navigate("calender")})
+            }
+        }
+        composable("showTaskInWeekly") {
+            Column {
+                taskWindow.ShowTasksInCalender(tasks = tasksToShow, onBackClicked = {navController.navigate("weekly")})
+            }
+        }
+    }
+}
+@Composable
+fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickCalender:() -> Unit, onClickWeekly:() -> Unit){
     Row(modifier= Modifier){
         Button(onClick = onClickTasks, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Tasks) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
             Text(text = "Tasks", color = if(selected==Tabs.Tasks) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
@@ -89,12 +120,8 @@ fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickCalender:() -> Unit, o
             Text(text = "Calender", color = if(selected==Tabs.Calender) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
         }
         Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickss2, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss2) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
-            Text(text = "ss2", color = if(selected==Tabs.Ss2) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
-        }
-        Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickss3, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Ss3) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
-            Text(text = "ss3", color = if(selected==Tabs.Ss3) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
+        Button(onClick = onClickWeekly, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Weekly) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
+            Text(text = "Weekly", color = if(selected==Tabs.Weekly) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
         }
     }
 }
@@ -108,7 +135,6 @@ fun initialize(){
     MainActivity.tasks.add(Task("Play Video Game", "play new Video Game which my friend bought for me.", Date(2023, 11, 19, 12, 23)))
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun test(){
     }
