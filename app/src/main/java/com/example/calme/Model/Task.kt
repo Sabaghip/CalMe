@@ -8,6 +8,7 @@ import java.util.Date
 import kotlin.system.exitProcess
 
 class Task(val title:String,val description:String,val date:Date) {
+    var done = false
     public fun getTitle1(): String {
         return this.title
     }
@@ -16,6 +17,12 @@ class Task(val title:String,val description:String,val date:Date) {
     }
     public fun getDate1(): Date{
         return this.date
+    }
+    public fun makeDone(){
+        this.done = true
+    }
+    public fun isDone1():Boolean{
+        return this.done
     }
     @RequiresApi(Build.VERSION_CODES.O)
     public fun isExpired(): Boolean{
@@ -53,10 +60,6 @@ class Task(val title:String,val description:String,val date:Date) {
 
         return true
     }
-
-    public fun isDone(): Boolean{
-        return false
-    }
 }
 
 class DayOfWeekDTO(val dayOfWeek:Int,val day:Int,val month:Int, val year:Int) {
@@ -91,7 +94,7 @@ class Category(val title:String) {
             if(task.isExpired()){
                 expiredTasks += 1
             }
-            if(task.isDone()){
+            if(task.isDone1()){
                 doneTasks += 1
             }
         }

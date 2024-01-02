@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -69,6 +70,7 @@ import kotlin.system.exitProcess
 var categoryToShow = Category("E")
 class TasksWindow {
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun showTasks(array: ArrayList<Task>, onClickCreate: () -> Unit) {
@@ -275,6 +277,7 @@ class TasksWindow {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun ShowTasksInCalender(tasks: ArrayList<Task>, onBackClicked: () -> Unit) {
         Column {
@@ -303,6 +306,7 @@ class TasksWindow {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun ShowTask(task: Task) {
         var expanded by remember {
@@ -315,7 +319,7 @@ class TasksWindow {
 
         ) {
             Box(
-                modifier = Modifier.background(md_theme_light_primaryContainer)
+                modifier = Modifier.background(if(task.isDone1()) Color(0xFF008000) else if (task.isExpired()) Color(0xFF800000) else md_theme_light_primaryContainer)
 
             ) {
                 Column {
@@ -347,12 +351,24 @@ class TasksWindow {
                         }
                     }
                     if (expanded) {
-                        Text(
-                            text = task.getDescription1(),
-                            modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
-                            color = md_theme_light_onPrimaryContainer,
-                            fontSize = 13.sp,
-                        )
+                        Column {
+                            Text(
+                                text = task.getDescription1(),
+                                modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
+                                color = md_theme_light_onPrimaryContainer,
+                                fontSize = 13.sp,
+                            )
+                            Row{
+                                Spacer(modifier = Modifier.weight(1f))
+                                IconButton(onClick = { task.makeDone() }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Done,
+                                        contentDescription = "show description"
+                                    )
+                                }
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
                     }
 
 
@@ -373,6 +389,7 @@ class TasksWindow {
         return res
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun showCategories(
         categories: ArrayList<Category>,
@@ -406,6 +423,7 @@ class TasksWindow {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun ShowCategory(category: Category, navcontroller: NavController) {
         var expanded by remember {
@@ -455,6 +473,7 @@ class TasksWindow {
         Spacer(modifier = Modifier.height(10.dp))
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun showCategory(onClickAdd: () -> Unit) {
         val tasks = categoryToShow.getTasks1()
@@ -566,7 +585,8 @@ class TasksWindow {
 
         ) {
             Box(
-                modifier = Modifier.background(md_theme_light_primaryContainer)
+                modifier = Modifier
+                    .background(md_theme_light_primaryContainer)
                     .clickable { categoryToShow.addTask(task); onClickBack() }
 
             ) {
