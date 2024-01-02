@@ -21,7 +21,6 @@ class Task(val title:String,val description:String,val date:Date) {
     public fun isExpired(): Boolean{
         val now = LocalDate.now()
         if(this.date.year < now.year){
-
             return true
         }
         else if(this.date.year > now.year){
@@ -54,6 +53,10 @@ class Task(val title:String,val description:String,val date:Date) {
 
         return true
     }
+
+    public fun isDone(): Boolean{
+        return false
+    }
 }
 
 class DayOfWeekDTO(val dayOfWeek:Int,val day:Int,val month:Int, val year:Int) {
@@ -62,6 +65,7 @@ class DayOfWeekDTO(val dayOfWeek:Int,val day:Int,val month:Int, val year:Int) {
 
 class Category(val title:String) {
     val tasks = ArrayList<Task>()
+
     public fun getTitle1(): String {
         return this.title
     }
@@ -69,8 +73,28 @@ class Category(val title:String) {
         return this.tasks
     }
     public fun addTask(task:Task){
-        if(!tasks.contains(task)) {
-            tasks.add(task)
+        for(taskk in tasks){
+            if(taskk == task){
+                return
+            }
         }
+        tasks.add(task)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    public fun getStatistic(): String{
+        var allTasks = 0
+        var expiredTasks = 0
+        var doneTasks = 0
+        for(task in tasks){
+            allTasks += 1
+            if(task.isExpired()){
+                expiredTasks += 1
+            }
+            if(task.isDone()){
+                doneTasks += 1
+            }
+        }
+        return "All = " + allTasks.toString() + "\nDone = " + doneTasks.toString() + "\nExpired = " + expiredTasks.toString()
     }
 }

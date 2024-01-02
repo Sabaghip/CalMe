@@ -441,7 +441,7 @@ class TasksWindow {
                     }
                     if (expanded) {
                         Text(
-                            text = "statistics",
+                            text = category.getStatistic(),
                             modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
                             color = md_theme_light_onPrimaryContainer,
                             fontSize = 13.sp,
