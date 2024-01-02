@@ -59,3 +59,18 @@ class Task(val title:String,val description:String,val date:Date) {
 class DayOfWeekDTO(val dayOfWeek:Int,val day:Int,val month:Int, val year:Int) {
 
 }
+
+class Category(val title:String) {
+    val tasks = ArrayList<Task>()
+    public fun getTitle1(): String {
+        return this.title
+    }
+    public fun getTasks1() : ArrayList<Task>{
+        return this.tasks
+    }
+    public fun addTask(task:Task){
+        if(!tasks.contains(task)) {
+            tasks.add(task)
+        }
+    }
+}

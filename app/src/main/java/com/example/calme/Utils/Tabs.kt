@@ -4,5 +4,5 @@ enum class Tabs {
     Tasks,
     Calender,
     Weekly,
-    Ss3
+    Categories
 }

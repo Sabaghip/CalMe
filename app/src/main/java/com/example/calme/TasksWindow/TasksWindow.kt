@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.DatePicker
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,7 +53,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.calme.MainActivity
+import com.example.calme.Model.Category
 import com.example.calme.Model.Task
 import com.example.compose.md_theme_light_background
 import com.example.compose.md_theme_light_onPrimaryContainer
@@ -63,17 +66,16 @@ import java.util.Calendar
 import java.util.Date
 import kotlin.system.exitProcess
 
-
+var categoryToShow = Category("E")
 class TasksWindow {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun showTasks(array : ArrayList<Task>, onClickCreate:()->Unit) {
+    fun showTasks(array: ArrayList<Task>, onClickCreate: () -> Unit) {
         Box() {
             LazyColumn(
                 modifier = Modifier
                     .padding(top = 10.dp)
-                    .height(550.dp)
             ) {
                 items(array) { item -> ShowTask(task = item) }
             }
@@ -92,20 +94,20 @@ class TasksWindow {
         }
     }
 
-    fun createTask(title:String, description:String, date:Date){
-        val newTask = Task(title=title, description=description, date=date)
+    fun createTask(title: String, description: String, date: Date) {
+        val newTask = Task(title = title, description = description, date = date)
         MainActivity.tasks.add(newTask)
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun CreateTaskTab(onBackClicked:()-> Unit){
+    fun CreateTaskTab(onBackClicked: () -> Unit) {
         Surface(
             modifier = Modifier
                 .fillMaxSize(),
             color = md_theme_light_background
-        ){
-            Box(modifier = Modifier.padding(top=50.dp, start = 50.dp)) {
+        ) {
+            Box(modifier = Modifier.padding(top = 50.dp, start = 50.dp)) {
                 Box(
                     modifier = Modifier
                         .height(1000.dp)
@@ -162,12 +164,19 @@ class TasksWindow {
                                 mDate.value = Date(mYear, mMonth, mDayOfMonth)
                             }, mYear, mMonth, mDay
                         )
-                        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             // Creating a button that on
                             // click displays/shows the DatePickerDialog
-                            Button(onClick = {
-                                mDatePickerDialog.show()
-                            }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary) ) {
+                            Button(
+                                onClick = {
+                                    mDatePickerDialog.show()
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
+                            ) {
                                 Text(text = "Select Date", color = Color.White)
                             }
 
@@ -188,17 +197,34 @@ class TasksWindow {
                             // Creating a TimePicker dialod
                             val mTimePickerDialog = TimePickerDialog(
                                 mContext,
-                                {_, mHour : Int, mMinute: Int ->
-                                    mDate.value=Date(mDate.value.year, mDate.value.month, mDate.value.date, mHour, mMinute)
+                                { _, mHour: Int, mMinute: Int ->
+                                    mDate.value = Date(
+                                        mDate.value.year,
+                                        mDate.value.month,
+                                        mDate.value.date,
+                                        mHour,
+                                        mMinute
+                                    )
                                 }, mHour, mMinute, false
                             )
-                            Text(text = "Selected Date: ${mDate.value.date}/${mDate.value.month + 1}/${mDate.value.year}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
+                            Text(
+                                text = "Selected Date: ${mDate.value.date}/${mDate.value.month + 1}/${mDate.value.year}",
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(start = 25.dp)
+                            )
 
-                            Column(modifier = Modifier.height(150.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                modifier = Modifier.height(150.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
 
                                 // On button click, TimePicker is
                                 // displayed, user can select a time
-                                Button(onClick = { mTimePickerDialog.show() }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
+                                Button(
+                                    onClick = { mTimePickerDialog.show() },
+                                    colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
+                                ) {
                                     Text(text = "Select Time", color = Color.White)
                                 }
 
@@ -206,19 +232,38 @@ class TasksWindow {
                                 Spacer(modifier = Modifier.size(10.dp))
 
                                 // Display selected time
-                                Text(text = "Selected Time: ${mDate.value.hours}:${mDate.value.minutes}", fontSize = 14.sp, modifier = Modifier.padding(start = 25.dp))
+                                Text(
+                                    text = "Selected Time: ${mDate.value.hours}:${mDate.value.minutes}",
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.padding(start = 25.dp)
+                                )
                             }
-                            Row(modifier = Modifier
-                                .fillMaxSize()
-                                .padding(start = 30.dp)) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(start = 30.dp)
+                            ) {
 
-                                Button(onClick = { onBackClicked() }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
+                                Button(
+                                    onClick = { onBackClicked() },
+                                    colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
+                                ) {
                                     Text(text = "Back", color = Color.White)
                                 }
 
                                 Spacer(modifier = Modifier.size(10.dp))
 
-                                Button(enabled = title.text != "" && description.text != "" ,onClick = { createTask(title=title.text, description=description.text, date=mDate.value);onBackClicked() }, colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)) {
+                                Button(
+                                    enabled = title.text != "" && description.text != "",
+                                    onClick = {
+                                        createTask(
+                                            title = title.text,
+                                            description = description.text,
+                                            date = mDate.value
+                                        );onBackClicked()
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
+                                ) {
                                     Text(text = "Add", color = Color.White)
                                 }
                             }
@@ -229,8 +274,9 @@ class TasksWindow {
             }
         }
     }
+
     @Composable
-    fun ShowTasksInCalender(tasks: ArrayList<Task>, onBackClicked:()-> Unit) {
+    fun ShowTasksInCalender(tasks: ArrayList<Task>, onBackClicked: () -> Unit) {
         Column {
             Row() {
                 Button(onClick = onBackClicked) {
@@ -239,7 +285,10 @@ class TasksWindow {
             }
             Row() {
                 Spacer(modifier = Modifier.weight(1f))
-                Text(text = "Tasks of ${tasks[0].getDate1().date}/${tasks[0].getDate1().month}/${tasks[0].getDate1().year}", fontSize = 20.sp)
+                Text(
+                    text = "Tasks of ${tasks[0].getDate1().date}/${tasks[0].getDate1().month}/${tasks[0].getDate1().year}",
+                    fontSize = 20.sp
+                )
                 Spacer(modifier = Modifier.weight(1f))
             }
             Box() {
@@ -253,6 +302,7 @@ class TasksWindow {
             }
         }
     }
+
     @Composable
     fun ShowTask(task: Task) {
         var expanded by remember {
@@ -275,24 +325,28 @@ class TasksWindow {
                             modifier = Modifier
                                 .padding(start = 10.dp, top = 10.dp, end = 10.dp)
                                 .height(40.dp),
-                            color=md_theme_light_onPrimaryContainer,
+                            color = md_theme_light_onPrimaryContainer,
                             fontWeight = FontWeight.Bold,
                         )
                         Spacer(modifier = Modifier.weight(1f))
-                        var date = task.getDate1().year.toString() + "-"+ (task.getDate1().month+1).toString() + "-"+ task.getDate1().date.toString() + " "+ task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
+                        var date =
+                            task.getDate1().year.toString() + "-" + (task.getDate1().month + 1).toString() + "-" + task.getDate1().date.toString() + " " + task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
                         Text(
                             text = date,
                             modifier = Modifier
                                 .padding(start = 10.dp, top = 10.dp, end = 10.dp)
                                 .height(60.dp),
-                            color=md_theme_light_onPrimaryContainer,
+                            color = md_theme_light_onPrimaryContainer,
                             fontWeight = FontWeight.Bold,
                         )
-                        IconButton(onClick = { expanded = !expanded}) {
-                            Icon(imageVector = Icons.Filled.Info, contentDescription = "show description")
+                        IconButton(onClick = { expanded = !expanded }) {
+                            Icon(
+                                imageVector = Icons.Filled.Info,
+                                contentDescription = "show description"
+                            )
                         }
                     }
-                    if(expanded) {
+                    if (expanded) {
                         Text(
                             text = task.getDescription1(),
                             modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
@@ -307,14 +361,240 @@ class TasksWindow {
         }
         Spacer(modifier = Modifier.height(10.dp))
     }
+
     @Composable
-    fun getTasksOfMonth(tasks:ArrayList<Task>, month:Int, year:Int):ArrayList<Task>{
+    fun getTasksOfMonth(tasks: ArrayList<Task>, month: Int, year: Int): ArrayList<Task> {
         val res = ArrayList<Task>()
-            for (task in tasks) {
-                if (task.getDate1().month == month && task.getDate1().year == year) {
-                    res.add(task)
+        for (task in tasks) {
+            if (task.getDate1().month == month && task.getDate1().year == year) {
+                res.add(task)
+            }
+        }
+        return res
+    }
+
+    @Composable
+    fun showCategories(
+        categories: ArrayList<Category>,
+        onClickCreate: () -> Unit,
+        navcontroller: NavController
+    ) {
+        Box() {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+            ) {
+                items(categories) { item ->
+                    ShowCategory(
+                        category = item,
+                        navcontroller = navcontroller
+                    )
                 }
             }
-        return res
+        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            FloatingActionButton(
+                modifier = Modifier
+                    .padding(all = 16.dp)
+                    .align(alignment = Alignment.BottomEnd),
+                onClick = {
+                    onClickCreate()
+                }
+            ) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
+            }
+        }
+    }
+
+    @Composable
+    fun ShowCategory(category: Category, navcontroller: NavController) {
+        var expanded by remember {
+            mutableStateOf(false)
+        }
+        Box(
+            modifier = Modifier
+                .padding(start = 10.dp, end = 10.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { categoryToShow = category; navcontroller.navigate("showCategory") }
+        ) {
+            Box(
+                modifier = Modifier.background(md_theme_light_primaryContainer)
+
+            ) {
+                Column {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = category.getTitle1(),
+                            modifier = Modifier
+                                .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                                .height(40.dp),
+                            color = md_theme_light_onPrimaryContainer,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        IconButton(onClick = { expanded = !expanded }) {
+                            Icon(
+                                imageVector = Icons.Filled.Info,
+                                contentDescription = "show statistics"
+                            )
+                        }
+                    }
+                    if (expanded) {
+                        Text(
+                            text = "statistics",
+                            modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
+                            color = md_theme_light_onPrimaryContainer,
+                            fontSize = 13.sp,
+                        )
+                    }
+
+
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+    }
+
+    @Composable
+    fun showCategory(onClickAdd: () -> Unit) {
+        val tasks = categoryToShow.getTasks1()
+        Column {
+            Row {
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = categoryToShow.getTitle1(), fontSize = 20.sp)
+                Spacer(modifier = Modifier.weight(1f))
+            }
+            Box() {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .height(550.dp)
+                ) {
+                    items(tasks) { item -> ShowTask(task = item) }
+                }
+            }
+        }
+        Box(modifier = Modifier.fillMaxSize()) {
+            FloatingActionButton(
+                modifier = Modifier
+                    .padding(all = 16.dp)
+                    .align(alignment = Alignment.BottomEnd),
+                onClick = {
+                    onClickAdd()
+                }
+            ) {
+                Icon(imageVector = Icons.Filled.Add, contentDescription = "Add")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun createCategory(onBackClicked: () -> Unit) {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize(),
+            color = md_theme_light_background
+        ) {
+            Box(modifier = Modifier.padding(top = 50.dp, start = 50.dp)) {
+                Box(
+                    modifier = Modifier
+                        .height(1000.dp)
+                        .width(240.dp)
+                        .background(md_theme_light_background)
+                        .padding(start = 10.dp, top = 10.dp)
+                ) {
+                    Column {
+                        var title by remember { mutableStateOf(TextFieldValue("")) }
+                        TextField(
+                            value = title,
+                            onValueChange = { title = it },
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .width(200.dp),
+                            label = { Text("Title") },
+                            placeholder = { Text("title") },
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 30.dp)
+                        ) {
+
+                            Button(
+                                onClick = { onBackClicked() },
+                                colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
+                            ) {
+                                Text(text = "Back", color = Color.White)
+                            }
+
+                            Spacer(modifier = Modifier.size(10.dp))
+
+                            Button(
+                                enabled = title.text != "",
+                                onClick = { MainActivity.categories.add(Category(title = title.text));onBackClicked() },
+                                colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
+                            ) {
+                                Text(text = "Add", color = Color.White)
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    @Composable
+    fun addNewTaskToCategory(onBackClicked: () -> Unit) {
+        Box() {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+            ) {
+                items(MainActivity.tasks) { item -> ShowTaskForAddToCategory(task = item, onClickBack = onBackClicked) }
+            }
+        }
+    }
+
+    @Composable
+    fun ShowTaskForAddToCategory(task: Task, onClickBack:()->Unit) {
+        Box(
+            modifier = Modifier
+                .padding(start = 10.dp, end = 10.dp)
+                .clip(RoundedCornerShape(20.dp))
+
+        ) {
+            Box(
+                modifier = Modifier.background(md_theme_light_primaryContainer)
+                    .clickable { categoryToShow.addTask(task); onClickBack() }
+
+            ) {
+                Column {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = task.getTitle1(),
+                            modifier = Modifier
+                                .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                                .height(40.dp),
+                            color = md_theme_light_onPrimaryContainer,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        var date =
+                            task.getDate1().year.toString() + "-" + (task.getDate1().month + 1).toString() + "-" + task.getDate1().date.toString() + " " + task.getDate1().hours.toString() + ":" + task.getDate1().minutes.toString()
+                        Text(
+                            text = date,
+                            modifier = Modifier
+                                .padding(start = 10.dp, top = 10.dp, end = 10.dp)
+                                .height(60.dp),
+                            color = md_theme_light_onPrimaryContainer,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+        }
     }
 }
