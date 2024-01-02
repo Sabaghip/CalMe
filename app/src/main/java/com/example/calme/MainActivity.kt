@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -135,21 +137,27 @@ fun runApp(){
 }
 @Composable
 fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickCalender:() -> Unit, onClickWeekly:() -> Unit, onClickCategories:() -> Unit){
-    Row(modifier= Modifier){
-        Button(onClick = onClickTasks, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Tasks) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
-            Text(text = "Tasks", color = if(selected==Tabs.Tasks) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
+    val buttons = ArrayList<temp>()
+    buttons.add(temp(onClickTasks, Tabs.Tasks))
+    buttons.add(temp(onClickCategories, Tabs.Categories))
+    buttons.add(temp(onClickCalender, Tabs.Calender))
+    buttons.add(temp(onClickWeekly, Tabs.Weekly))
+    LazyRow() {
+        items(buttons) { item ->
+            ShowButton(button = item, selected=selected)
         }
-        Button(onClick = onClickCategories, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Categories) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
-            Text(text = "Categories", color = if(selected==Tabs.Categories) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
-        }
-        Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickCalender, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Calender) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
-            Text(text = "Calender", color = if(selected==Tabs.Calender) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
-        }
-        Spacer(modifier = Modifier.width(10.dp))
-        Button(onClick = onClickWeekly, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==Tabs.Weekly) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
-            Text(text = "Weekly", color = if(selected==Tabs.Weekly) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
-        }
+    }
+}
+
+data class temp(
+    val onClick:()->Unit,
+    val selected:Tabs,
+)
+
+@Composable
+fun ShowButton(button: temp, selected:Tabs) {
+    Button(onClick = button.onClick, colors = ButtonDefaults.outlinedButtonColors(containerColor=(if(selected==button.selected) md_theme_light_tertiaryContainer else md_theme_light_tertiary))) {
+        Text(text = button.selected.toString(), color = if(selected==button.selected) md_theme_light_tertiary else md_theme_light_tertiaryContainer)
     }
 }
 
