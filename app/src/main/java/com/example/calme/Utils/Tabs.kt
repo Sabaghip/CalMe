@@ -5,5 +5,6 @@ enum class Tabs {
     Calender,
     Weekly,
     Categories,
-    Upcomings
+    Upcomings,
+    Statistics
 }

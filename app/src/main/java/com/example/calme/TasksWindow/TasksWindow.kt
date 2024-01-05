@@ -46,8 +46,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -72,7 +74,8 @@ class TasksWindow {
         Box() {
             LazyColumn(
                 modifier = Modifier
-                    .padding(top = 10.dp).height(550.dp)
+                    .padding(top = 10.dp)
+                    .height(550.dp)
             ) {
                 items(array) { item -> ShowTask(task = item) }
             }
@@ -95,6 +98,86 @@ class TasksWindow {
         val newTask = Task(id = MainActivity.global_id,title = title, description = description, date = date, done=false)
         MainActivity.global_id++
         MainActivity.tasks.add(newTask)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getAllStatistic() : String{
+        var allTasks = 0
+        var expiredTasks = 0
+        var doneTasks = 0
+        for(task in MainActivity.tasks){
+            allTasks += 1
+            if(task.isExpired()){
+                expiredTasks += 1
+            }
+            if(task.isDone1()){
+                doneTasks += 1
+            }
+        }
+        return "All = " + allTasks.toString() + "\nDone = " + doneTasks.toString() + " (%" + (100.0 * doneTasks/allTasks).toString() + ")\nExpired = " + expiredTasks.toString() + " (%" + (100.0 * expiredTasks/allTasks).toString() + ")"
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Composable
+    fun showStatistics(){
+        Row {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "ALL",
+                modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
+                color = Color.Red,
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
+        Row{
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = getAllStatistic(),
+                modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
+                color = md_theme_light_onPrimaryContainer,
+                fontSize = 13.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
+        Box() {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .height(550.dp)
+            ) {
+                items(MainActivity.categories) { item -> ShowStatisticsForCategoery(category = item) }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Composable
+    fun ShowStatisticsForCategoery(category: Category){
+        Row {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = category.title,
+                modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
+                color = Color.Red,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
+        Row{
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = category.getStatistic(),
+                modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 10.dp),
+                color = md_theme_light_onPrimaryContainer,
+                fontSize = 13.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -152,7 +235,7 @@ class TasksWindow {
 
                         // Declaring a string value to
                         // store date in string format
-                        val mDate = remember { mutableStateOf(Date()) }
+                        val mDate = remember { mutableStateOf(Date(mYear, mMonth, mDay)) }
 
                         // Declaring DatePickerDialog and setting
                         // initial values as current values (present year, month and day)

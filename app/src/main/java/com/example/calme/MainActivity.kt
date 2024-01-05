@@ -76,7 +76,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
-        Log.d("eeeeeeeeeeeeeeeeeeee", "yyyyyyyyyyyyyyyyyyyyyyyy")
         val taskssForSavee = ListOfTasksForSave(ArrayList<TaskForSave>())
         for(task in tasks){
             taskssForSavee.tasksForSave.add(
@@ -120,29 +119,35 @@ fun runApp(){
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
             Column {
-                navBar(selected =  Tabs.Tasks, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks= {tabState = Tabs.Tasks}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")})
+                navBar(selected =  Tabs.Tasks, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks= {tabState = Tabs.Tasks}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")}, onClickStatistics = {tabState=Tabs.Statistics;navController.navigate("statistics")})
                 taskWindow.showTasks(MainActivity.tasks, onClickCreate = {navController.navigate("create")})
             }
         }
         composable("categories") {
             Column {
-                navBar(selected =  Tabs.Categories, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCategories= {tabState = Tabs.Categories}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")})
+                navBar(selected =  Tabs.Categories, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCategories= {tabState = Tabs.Categories}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")}, onClickStatistics = {tabState=Tabs.Statistics;navController.navigate("statistics")})
                 taskWindow.showCategories(categories= categories, onClickCreate = {navController.navigate("createCategory")}, navcontroller = navController)
             }
         }
         composable("upcomings") {
             Column {
-                navBar(selected =  Tabs.Upcomings, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCategories= {tabState = Tabs.Categories; navController.navigate("categories")}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings})
+                navBar(selected =  Tabs.Upcomings, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCategories= {tabState = Tabs.Categories; navController.navigate("categories")}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings}, onClickStatistics = {tabState=Tabs.Statistics;navController.navigate("statistics")})
                 taskWindow.showUpcomings()
             }
         }
         composable("calender") {
-            navBar(selected=Tabs.Calender, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender =  {tabState = Tabs.Calender}, onClickWeekly =  {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")})
+            navBar(selected=Tabs.Calender, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender =  {tabState = Tabs.Calender}, onClickWeekly =  {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")}, onClickStatistics = {tabState=Tabs.Statistics;navController.navigate("statistics")})
             customCalender.runCalender(navContrller = navController)
         }
         composable("weekly") {
-            navBar(selected=Tabs.Weekly, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender =  {tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly =  {tabState = Tabs.Weekly}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")})
+            navBar(selected=Tabs.Weekly, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender =  {tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly =  {tabState = Tabs.Weekly}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")}, onClickStatistics = {tabState=Tabs.Statistics;navController.navigate("statistics")})
             customWeekly.runWeekly(navController = navController)
+        }
+        composable("statistics") {
+            Column {
+                navBar(selected =  Tabs.Statistics, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks= {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")}, onClickStatistics = {tabState=Tabs.Statistics})
+                taskWindow.showStatistics()
+            }
         }
         composable("create") {
             Column {
@@ -177,13 +182,14 @@ fun runApp(){
     }
 }
 @Composable
-fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickCalender:() -> Unit, onClickWeekly:() -> Unit, onClickCategories:() -> Unit, onClickUpcomings:()->Unit){
+fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickCalender:() -> Unit, onClickWeekly:() -> Unit, onClickCategories:() -> Unit, onClickUpcomings:()->Unit,onClickStatistics : () -> Unit){
     val buttons = ArrayList<temp>()
     buttons.add(temp(onClickTasks, Tabs.Tasks))
     buttons.add(temp(onClickCategories, Tabs.Categories))
     buttons.add(temp(onClickCalender, Tabs.Calender))
     buttons.add(temp(onClickWeekly, Tabs.Weekly))
     buttons.add(temp(onClickUpcomings, Tabs.Upcomings))
+    buttons.add(temp(onClickStatistics, Tabs.Statistics))
     LazyRow() {
         items(buttons) { item ->
             ShowButton(button = item, selected=selected)
@@ -219,9 +225,7 @@ fun initialize(){
 
     val jsonn = settings?.getString("categories", "nullll")
     if (jsonn != null) {
-        Log.d("qqqqqqqqqqqqq", jsonn)
         if(jsonn != "nullll"){
-            Log.d("pppppppppp", jsonn)
             val temp = jsonn.let { Json.decodeFromString<ListOfCategoriesForSave>(jsonn) } as ListOfCategoriesForSave
 
             for(category in temp.categoriesForSave){

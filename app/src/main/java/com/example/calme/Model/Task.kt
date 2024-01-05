@@ -26,6 +26,9 @@ class Task(val id : Int, val title:String, val description:String, val date:Date
     }
     @RequiresApi(Build.VERSION_CODES.O)
     public fun isExpired(): Boolean{
+        if(done){
+            return false
+        }
         val now = LocalDate.now()
         if(this.date.year < now.year){
             return true
