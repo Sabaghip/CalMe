@@ -1,25 +1,16 @@
 package com.example.calme
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,11 +19,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.example.calme.MainActivity.Companion.categories
 import com.example.calme.MainActivity.Companion.tasks
+import com.example.calme.Model.Category
 import com.example.calme.Model.Task
 import com.example.calme.TasksWindow.TasksWindow
 import com.example.calme.Utils.Tabs
@@ -40,26 +35,25 @@ import com.example.compose.AppTheme
 import com.example.compose.md_theme_light_background
 import com.example.compose.md_theme_light_tertiary
 import com.example.compose.md_theme_light_tertiaryContainer
-import java.util.Calendar
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import java.util.Date
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.example.calme.MainActivity.Companion.categories
-import com.example.calme.Model.Category
 
 
 val taskWindow = TasksWindow()
 val customCalender = CustomCalender()
 val customWeekly = CustomWeekly()
 
-
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                initialize();
+                runBlocking{
+                    initialize();
+                }
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = md_theme_light_background
@@ -78,6 +72,8 @@ class MainActivity : ComponentActivity() {
 
 
 
+
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun runApp(){
     var tabState by remember { mutableStateOf(Tabs.Tasks) }
@@ -85,37 +81,43 @@ fun runApp(){
     NavHost(navController = navController, startDestination = "home") {
         composable("home") {
             Column {
-                navBar(selected =  Tabs.Tasks, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks= {tabState = Tabs.Tasks}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")})
+                navBar(selected =  Tabs.Tasks, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks= {tabState = Tabs.Tasks}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")})
                 taskWindow.showTasks(MainActivity.tasks, onClickCreate = {navController.navigate("create")})
             }
         }
         composable("categories") {
             Column {
-                navBar(selected =  Tabs.Categories, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCategories= {tabState = Tabs.Categories}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")})
+                navBar(selected =  Tabs.Categories, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCategories= {tabState = Tabs.Categories}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")})
                 taskWindow.showCategories(categories= categories, onClickCreate = {navController.navigate("createCategory")}, navcontroller = navController)
             }
         }
+        composable("upcomings") {
+            Column {
+                navBar(selected =  Tabs.Upcomings, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCategories= {tabState = Tabs.Categories; navController.navigate("categories")}, onClickCalender={tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly = {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings})
+                taskWindow.showUpcomings()
+            }
+        }
         composable("calender") {
-            navBar(selected=Tabs.Calender, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender =  {tabState = Tabs.Calender}, onClickWeekly =  {tabState = Tabs.Weekly;navController.navigate("weekly")})
+            navBar(selected=Tabs.Calender, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender =  {tabState = Tabs.Calender}, onClickWeekly =  {tabState = Tabs.Weekly;navController.navigate("weekly")}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")})
             customCalender.runCalender(navContrller = navController)
         }
         composable("weekly") {
-            navBar(selected=Tabs.Weekly, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender =  {tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly =  {tabState = Tabs.Weekly})
+            navBar(selected=Tabs.Weekly, onClickCategories= {tabState = Tabs.Categories;navController.navigate("categories")}, onClickTasks =  {tabState = Tabs.Tasks; navController.navigate("home")}, onClickCalender =  {tabState = Tabs.Calender;navController.navigate("calender")}, onClickWeekly =  {tabState = Tabs.Weekly}, onClickUpcomings = {tabState = Tabs.Upcomings;navController.navigate("upcomings")})
             customWeekly.runWeekly(navController = navController)
         }
         composable("create") {
             Column {
-                taskWindow.CreateTaskTab(onBackClicked = {navController.navigate("home")})
+                taskWindow.CreateTaskTab(onBackClicked = {navController.popBackStack()})
             }
         }
         composable("showTaskInCalender") {
             Column {
-                taskWindow.ShowTasksInCalender(tasks = tasksToShow, onBackClicked = {navController.navigate("calender")})
+                taskWindow.ShowTasksInCalender(tasks = tasksToShow, onBackClicked = {navController.popBackStack()})
             }
         }
         composable("showTaskInWeekly") {
             Column {
-                taskWindow.ShowTasksInCalender(tasks = tasksToShow, onBackClicked = {navController.navigate("weekly")})
+                taskWindow.ShowTasksInCalender(tasks = tasksToShow, onBackClicked = {navController.popBackStack()})
             }
         }
         composable("showCategory") {
@@ -125,23 +127,24 @@ fun runApp(){
         }
         composable("createCategory") {
             Column {
-                taskWindow.createCategory(onBackClicked = {navController.navigate("categories")})
+                taskWindow.createCategory(onBackClicked = {navController.popBackStack()})
             }
         }
         composable("addNewTaskToCategory") {
             Column {
-                taskWindow.addNewTaskToCategory(onBackClicked={navController.navigate("categories")})
+                taskWindow.addNewTaskToCategory(onBackClicked={navController.popBackStack()})
             }
         }
     }
 }
 @Composable
-fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickCalender:() -> Unit, onClickWeekly:() -> Unit, onClickCategories:() -> Unit){
+fun navBar(selected:Tabs, onClickTasks:() -> Unit, onClickCalender:() -> Unit, onClickWeekly:() -> Unit, onClickCategories:() -> Unit, onClickUpcomings:()->Unit){
     val buttons = ArrayList<temp>()
     buttons.add(temp(onClickTasks, Tabs.Tasks))
     buttons.add(temp(onClickCategories, Tabs.Categories))
     buttons.add(temp(onClickCalender, Tabs.Calender))
     buttons.add(temp(onClickWeekly, Tabs.Weekly))
+    buttons.add(temp(onClickUpcomings, Tabs.Upcomings))
     LazyRow() {
         items(buttons) { item ->
             ShowButton(button = item, selected=selected)
@@ -161,7 +164,7 @@ fun ShowButton(button: temp, selected:Tabs) {
     }
 }
 
-fun initialize(){
+suspend fun initialize(){
     tasks.add(Task("Eating", "Eat lunch before take a nap", Date(2023, 10, 19, 18, 23)))
     tasks.add(Task("Watching Tv", "Watch football game after nap.", Date(2023, 11, 12, 20, 23)))
     tasks.add(Task("Play Video Game", "play new Video Game which my friend bought for me.", Date(2023, 9, 19, 12, 23)))

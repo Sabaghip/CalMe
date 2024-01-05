@@ -2,8 +2,6 @@ package com.example.calme.TasksWindow
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import android.widget.DatePicker
@@ -29,7 +27,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -58,14 +54,15 @@ import androidx.navigation.NavController
 import com.example.calme.MainActivity
 import com.example.calme.Model.Category
 import com.example.calme.Model.Task
+import com.example.calme.taskDao
 import com.example.compose.md_theme_light_background
 import com.example.compose.md_theme_light_onPrimaryContainer
 import com.example.compose.md_theme_light_primary
 import com.example.compose.md_theme_light_primaryContainer
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
-import kotlin.system.exitProcess
 
 var categoryToShow = Category("E")
 class TasksWindow {
@@ -77,7 +74,7 @@ class TasksWindow {
         Box() {
             LazyColumn(
                 modifier = Modifier
-                    .padding(top = 10.dp)
+                    .padding(top = 10.dp).height(550.dp)
             ) {
                 items(array) { item -> ShowTask(task = item) }
             }
@@ -97,7 +94,7 @@ class TasksWindow {
     }
 
     fun createTask(title: String, description: String, date: Date) {
-        val newTask = Task(title = title, description = description, date = date)
+        val newTask = Task(id=7,title = title, description = description, date = date, done = false)
         MainActivity.tasks.add(newTask)
     }
 
@@ -207,7 +204,7 @@ class TasksWindow {
                                         mHour,
                                         mMinute
                                     )
-                                }, mHour, mMinute, false
+                                }, mHour, mMinute, true
                             )
                             Text(
                                 text = "Selected Date: ${mDate.value.date}/${mDate.value.month + 1}/${mDate.value.year}",
@@ -306,6 +303,38 @@ class TasksWindow {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Composable
+    fun showUpcomings() {
+        val tasks = ArrayList<Task>()
+        for(task in MainActivity.tasks){
+            val now = LocalDate.now()
+            val temp = task.getDate1()
+            Log.d("yyy", "${now.year},${temp.year},${now.monthValue},${temp.month},${now.dayOfMonth},${temp.date} ")
+            if(temp.date == now.dayOfMonth && temp.month + 1 == now.monthValue && temp.year == now.year && !task.isExpired() && !task.isDone1()){
+                tasks.add(task)
+            }
+        }
+        Column {
+            Row() {
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "Todays tasks",
+                    fontSize = 20.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+            }
+            Box() {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .height(550.dp)
+                ) {
+                    items(tasks) { item -> ShowTask(task = item) }
+                }
+            }
+        }
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
     fun ShowTask(task: Task) {

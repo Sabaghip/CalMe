@@ -4,5 +4,6 @@ enum class Tabs {
     Tasks,
     Calender,
     Weekly,
-    Categories
+    Categories,
+    Upcomings
 }

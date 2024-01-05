@@ -3,9 +3,10 @@ package com.example.calme.Model
 import android.os.Build
 import android.text.format.Time
 import androidx.annotation.RequiresApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.util.Date
-import kotlin.system.exitProcess
 
 class Task(val title:String,val description:String,val date:Date) {
     var done = false
@@ -33,16 +34,16 @@ class Task(val title:String,val description:String,val date:Date) {
         else if(this.date.year > now.year){
             return false
         }
-        if(this.date.month < now.monthValue){
+        if(this.date.month + 1 < now.monthValue){
             return true
         }
-        else if(this.date.month > now.monthValue){
+        else if(this.date.month + 1 > now.monthValue){
             return false
         }
-        if(this.date.date < now.dayOfMonth){
+        if(this.date.date + 1 < now.dayOfMonth){
             return true
         }
-        else if(this.date.date > now.dayOfMonth){
+        else if(this.date.date + 1 > now.dayOfMonth){
             return false
         }
         if(this.date.hours < Time.HOUR){
