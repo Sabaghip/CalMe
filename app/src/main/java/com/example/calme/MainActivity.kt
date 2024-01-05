@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
         for(task in tasks){
             taskssForSavee.tasksForSave.add(
                 TaskForSave(task.id,task.getTitle1(), task.getDescription1(), task.date.year, task.date.month,
-                    task.date.day, task.date.hours, task.date.minutes, task.done))
+                    task.date.date, task.date.hours, task.date.minutes, task.done))
         }
 
         val categoriesForSavee = ListOfCategoriesForSave(ArrayList<CategoryForSave>())

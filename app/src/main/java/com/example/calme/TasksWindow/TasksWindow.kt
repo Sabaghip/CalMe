@@ -63,6 +63,7 @@ import com.example.compose.md_theme_light_primaryContainer
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
+import kotlin.math.roundToInt
 
 var categoryToShow = Category("E")
 class TasksWindow {
@@ -114,7 +115,7 @@ class TasksWindow {
                 doneTasks += 1
             }
         }
-        return "All = " + allTasks.toString() + "\nDone = " + doneTasks.toString() + " (%" + (100.0 * doneTasks/allTasks).toString() + ")\nExpired = " + expiredTasks.toString() + " (%" + (100.0 * expiredTasks/allTasks).toString() + ")"
+        return "All = " + allTasks.toString() + "\nDone = " + doneTasks.toString() + " (%" + (100.0 * doneTasks/allTasks).roundToInt().toString() + ")\nExpired = " + expiredTasks.toString() + " (%" + (100.0 * expiredTasks/allTasks).roundToInt().toString() + ")"
     }
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable

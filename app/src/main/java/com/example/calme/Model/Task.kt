@@ -2,10 +2,12 @@ package com.example.calme.Model
 
 import android.os.Build
 import android.text.format.Time
+import android.util.Log
 import androidx.annotation.RequiresApi
 import java.time.LocalDate
 import java.util.Date
 import kotlinx.serialization.Serializable
+import java.time.LocalTime
 
 
 class Task(val id : Int, val title:String, val description:String, val date:Date, var done:Boolean) {
@@ -30,6 +32,7 @@ class Task(val id : Int, val title:String, val description:String, val date:Date
             return false
         }
         val now = LocalDate.now()
+        val time = LocalTime.now()
         if(this.date.year < now.year){
             return true
         }
@@ -42,25 +45,24 @@ class Task(val id : Int, val title:String, val description:String, val date:Date
         else if(this.date.month + 1 > now.monthValue){
             return false
         }
-        if(this.date.date + 1 < now.dayOfMonth){
+        if(this.date.date < now.dayOfMonth){
             return true
         }
-        else if(this.date.date + 1 > now.dayOfMonth){
+        else if(this.date.date > now.dayOfMonth){
             return false
         }
-        if(this.date.hours < Time.HOUR){
+        if(this.date.hours < time.hour){
             return true
         }
-        else if(this.date.hours > Time.HOUR){
+        else if(this.date.hours > time.hour){
             return false
         }
-        if(this.date.minutes < Time.MINUTE){
+        if(this.date.minutes < time.minute){
             return true
         }
-        else if(this.date.minutes > Time.MINUTE){
+        else if(this.date.minutes > time.minute){
             return false
         }
-
         return true
     }
 }
