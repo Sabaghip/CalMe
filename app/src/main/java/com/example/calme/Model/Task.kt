@@ -5,9 +5,10 @@ import android.text.format.Time
 import androidx.annotation.RequiresApi
 import java.time.LocalDate
 import java.util.Date
+import kotlinx.serialization.Serializable
 
-class Task(val title:String,val description:String,val date:Date) {
-    var done = false
+
+class Task(val id : Int, val title:String, val description:String, val date:Date, var done:Boolean) {
     public fun getTitle1(): String {
         return this.title
     }
@@ -61,9 +62,14 @@ class Task(val title:String,val description:String,val date:Date) {
     }
 }
 
+@Serializable
+data class TaskForSave(val id:Int,val title:String,val description:String,val year:Int, val month:Int, val day:Int, val hour:Int, val minute:Int, val done:Boolean)
+
 class DayOfWeekDTO(val dayOfWeek:Int,val day:Int,val month:Int, val year:Int) {
 
 }
+@Serializable
+data class ListOfTasksForSave(val tasksForSave: ArrayList<TaskForSave>)
 
 class Category(val title:String) {
     val tasks = ArrayList<Task>()
@@ -100,3 +106,8 @@ class Category(val title:String) {
         return "All = " + allTasks.toString() + "\nDone = " + doneTasks.toString() + "\nExpired = " + expiredTasks.toString()
     }
 }
+@Serializable
+data class CategoryForSave(val title:String, val tasksId : ArrayList<Int>)
+
+@Serializable
+data class ListOfCategoriesForSave(val categoriesForSave: ArrayList<CategoryForSave>)

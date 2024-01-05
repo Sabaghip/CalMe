@@ -92,7 +92,8 @@ class TasksWindow {
     }
 
     fun createTask(title: String, description: String, date: Date) {
-        val newTask = Task(title = title, description = description, date = date)
+        val newTask = Task(id = MainActivity.global_id,title = title, description = description, date = date, done=false)
+        MainActivity.global_id++
         MainActivity.tasks.add(newTask)
     }
 

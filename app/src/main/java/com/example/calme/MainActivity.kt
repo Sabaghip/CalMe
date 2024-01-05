@@ -1,7 +1,10 @@
 package com.example.calme
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -24,15 +27,24 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.calme.MainActivity.Companion.categories
 import com.example.calme.MainActivity.Companion.tasks
+import com.example.calme.MainActivity.Companion.global_id
+import com.example.calme.MainActivity.Companion.settings
+import com.example.calme.MainActivity.Companion.editor
 import com.example.calme.Model.Category
+import com.example.calme.Model.CategoryForSave
+import com.example.calme.Model.ListOfCategoriesForSave
+import com.example.calme.Model.ListOfTasksForSave
 import com.example.calme.Model.Task
+import com.example.calme.Model.TaskForSave
 import com.example.calme.TasksWindow.TasksWindow
 import com.example.calme.Utils.Tabs
 import com.example.compose.AppTheme
 import com.example.compose.md_theme_light_background
 import com.example.compose.md_theme_light_tertiary
 import com.example.compose.md_theme_light_tertiaryContainer
-
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeToSequence
 import java.util.Date
 
 
@@ -44,6 +56,10 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        settings = applicationContext.getSharedPreferences("callme", 0)
+        editor = applicationContext.getSharedPreferences("callme", 0).edit()
+
         setContent {
             AppTheme {
                 initialize();
@@ -58,9 +74,38 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        Log.d("eeeeeeeeeeeeeeeeeeee", "yyyyyyyyyyyyyyyyyyyyyyyy")
+        val taskssForSavee = ListOfTasksForSave(ArrayList<TaskForSave>())
+        for(task in tasks){
+            taskssForSavee.tasksForSave.add(
+                TaskForSave(task.id,task.getTitle1(), task.getDescription1(), task.date.year, task.date.month,
+                    task.date.day, task.date.hours, task.date.minutes, task.done))
+        }
+
+        val categoriesForSavee = ListOfCategoriesForSave(ArrayList<CategoryForSave>())
+        for(category in categories){
+            val temp = ArrayList<Int>()
+            for(task in category.tasks){
+                temp.add(task.id)
+            }
+            categoriesForSavee.categoriesForSave.add(CategoryForSave(category.title, temp))
+        }
+
+        editor?.putString("categories", Json.encodeToString(categoriesForSavee))
+
+        editor?.putString("tasks", Json.encodeToString(taskssForSavee))
+        editor?.putInt("id", global_id)
+        editor?.apply()
+    }
+
     companion object {
         val tasks = ArrayList<Task>()
         val categories = ArrayList<Category>()
+        var settings : SharedPreferences? = null
+        var editor = settings?.edit()
+        var global_id = 0
     }
 }
 
@@ -159,21 +204,40 @@ fun ShowButton(button: temp, selected:Tabs) {
 }
 
 fun initialize(){
-    tasks.add(Task("Eating", "Eat lunch before take a nap", Date(2023, 10, 19, 18, 23)))
-    tasks.add(Task("Watching Tv", "Watch football game after nap.", Date(2023, 11, 12, 20, 23)))
-    tasks.add(Task("Play Video Game", "play new Video Game which my friend bought for me.", Date(2023, 9, 19, 12, 23)))
-    tasks.add(Task("Eating", "Eat lunch before take a nap", Date(2023, 11, 19, 18, 23)))
-    tasks.add(Task("Watching Tv", "Watch football game after nap.", Date(2023, 11, 14, 20, 23)))
-    tasks.add(Task("Play Video Game", "play new Video Game which my friend bought for me.", Date(2023, 11, 19, 12, 23)))
 
-    val c1 = Category("c1 is something")
-    val c2 = Category("c2 is something")
-    categories.add(c1)
-    categories.add(c2)
-    c1.addTask(tasks.get(0))
-    c1.addTask(tasks.get(1))
-    c2.addTask(tasks.get(2))
-    c2.addTask(tasks.get(1))
+    global_id = settings?.getInt("id", 0)!!
+    val json = settings?.getString("tasks", "nullll")
+    if (json != null) {
+        if(json != "nullll"){
+            val temp = json.let { Json.decodeFromString<ListOfTasksForSave>(json) } as ListOfTasksForSave
+
+            for(task in temp.tasksForSave){
+                tasks.add(Task(task.id,task.title, task.description, Date(task.year, task.month, task.day, task.hour,task.minute), task.done))
+            }
+        }
+    }
+
+    val jsonn = settings?.getString("categories", "nullll")
+    if (jsonn != null) {
+        Log.d("qqqqqqqqqqqqq", jsonn)
+        if(jsonn != "nullll"){
+            Log.d("pppppppppp", jsonn)
+            val temp = jsonn.let { Json.decodeFromString<ListOfCategoriesForSave>(jsonn) } as ListOfCategoriesForSave
+
+            for(category in temp.categoriesForSave){
+                val tempp = Category(category.title)
+                categories.add(tempp)
+                for(id in category.tasksId){
+                    for(task in tasks){
+                        if(task.id==id){
+                            tempp.addTask(task)
+                            break
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable
