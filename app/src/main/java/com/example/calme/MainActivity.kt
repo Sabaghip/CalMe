@@ -22,9 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.example.calme.MainActivity.Companion.categories
 import com.example.calme.MainActivity.Companion.tasks
 import com.example.calme.Model.Category
@@ -35,8 +32,7 @@ import com.example.compose.AppTheme
 import com.example.compose.md_theme_light_background
 import com.example.compose.md_theme_light_tertiary
 import com.example.compose.md_theme_light_tertiaryContainer
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+
 import java.util.Date
 
 
@@ -50,9 +46,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                runBlocking{
-                    initialize();
-                }
+                initialize();
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -164,7 +158,7 @@ fun ShowButton(button: temp, selected:Tabs) {
     }
 }
 
-suspend fun initialize(){
+fun initialize(){
     tasks.add(Task("Eating", "Eat lunch before take a nap", Date(2023, 10, 19, 18, 23)))
     tasks.add(Task("Watching Tv", "Watch football game after nap.", Date(2023, 11, 12, 20, 23)))
     tasks.add(Task("Play Video Game", "play new Video Game which my friend bought for me.", Date(2023, 9, 19, 12, 23)))

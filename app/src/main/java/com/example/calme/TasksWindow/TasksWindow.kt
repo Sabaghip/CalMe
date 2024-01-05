@@ -54,12 +54,10 @@ import androidx.navigation.NavController
 import com.example.calme.MainActivity
 import com.example.calme.Model.Category
 import com.example.calme.Model.Task
-import com.example.calme.taskDao
 import com.example.compose.md_theme_light_background
 import com.example.compose.md_theme_light_onPrimaryContainer
 import com.example.compose.md_theme_light_primary
 import com.example.compose.md_theme_light_primaryContainer
-import kotlinx.coroutines.runBlocking
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
@@ -94,7 +92,7 @@ class TasksWindow {
     }
 
     fun createTask(title: String, description: String, date: Date) {
-        val newTask = Task(id=7,title = title, description = description, date = date, done = false)
+        val newTask = Task(title = title, description = description, date = date)
         MainActivity.tasks.add(newTask)
     }
 
