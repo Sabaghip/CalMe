@@ -10,17 +10,27 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.calme.Model.Task
+import com.example.calme.Utils.Tabs
 import java.util.Calendar
 import java.util.Date
 
@@ -28,12 +38,12 @@ var tasksToShow = ArrayList<Task>()
 class CustomCalender {
     @Composable
     fun runCalender(navContrller : NavController){
-            Calender(Date(), navContrller = navContrller)
+            Calender(navContrller = navContrller)
     }
 
     @Composable
-    fun Calender(date : Date, navContrller:NavController){
-        val calendar = Calendar.getInstance();
+    fun Calender(navContrller:NavController){
+        var calendar by remember { mutableStateOf(Calendar.getInstance()) }
         val month = calendar.get(Calendar.MONTH)
         val year = calendar.get(Calendar.YEAR)
         val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
@@ -50,7 +60,28 @@ class CustomCalender {
         Column(modifier = Modifier.padding(start = 10.dp, top = 100.dp)) {
             Row {
                 Spacer(modifier = Modifier.weight(1f))
-                Text(text = "${getMonthName(month)} ${year}", fontSize = 20.sp)
+                Button(onClick = {calendar.add(Calendar.YEAR, -1);var temp=calendar;calendar= Calendar.getInstance(); calendar=temp}) {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowLeft, contentDescription = "Back")
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = "${year}", fontSize = 20.sp, modifier = Modifier.width(130.dp), textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.weight(1f))
+                Button(onClick = {calendar.add(Calendar.YEAR, 1);var temp=calendar;calendar= Calendar.getInstance(); calendar=temp}) {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowRight, contentDescription = "Back")
+                }
+                Spacer(modifier = Modifier.weight(1f))
+            }
+            Row {
+                Spacer(modifier = Modifier.weight(1f))
+                Button(onClick = {calendar.add(Calendar.MONTH, -1);var temp=calendar;calendar= Calendar.getInstance(); calendar=temp}) {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowLeft, contentDescription = "Back")
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = "${getMonthName(month)}", fontSize = 20.sp, modifier = Modifier.width(130.dp), textAlign = TextAlign.Center)
+                Spacer(modifier = Modifier.weight(1f))
+                Button(onClick = {calendar.add(Calendar.MONTH, 1);var temp=calendar;calendar= Calendar.getInstance(); calendar=temp}) {
+                    Icon(imageVector = Icons.Filled.KeyboardArrowRight, contentDescription = "Back")
+                }
                 Spacer(modifier = Modifier.weight(1f))
             }
 
