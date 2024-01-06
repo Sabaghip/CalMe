@@ -369,7 +369,7 @@ class TasksWindow {
             Row() {
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "Tasks of ${tasks[0].getDate1().date}/${tasks[0].getDate1().month}/${tasks[0].getDate1().year}",
+                    text = "Tasks of ${tasks[0].getDate1().date}/${tasks[0].getDate1().month + 1}/${tasks[0].getDate1().year}",
                     fontSize = 20.sp
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -393,7 +393,6 @@ class TasksWindow {
         for(task in MainActivity.tasks){
             val now = LocalDate.now()
             val temp = task.getDate1()
-            Log.d("yyy", "${now.year},${temp.year},${now.monthValue},${temp.month},${now.dayOfMonth},${temp.date} ")
             if(temp.date == now.dayOfMonth && temp.month + 1 == now.monthValue && temp.year == now.year && !task.isExpired() && !task.isDone1()){
                 tasks.add(task)
             }

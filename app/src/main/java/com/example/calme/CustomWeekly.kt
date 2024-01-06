@@ -1,5 +1,6 @@
 package com.example.calme
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -44,7 +45,8 @@ class CustomWeekly {
         var dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
         var dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
         val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        while (dayOfWeek > 0) {
+        Log.d("oooooooooooo", dayOfWeek.toString())
+        while (dayOfWeek > 1) {
             if (dayOfMonth > 1) {
                 dayOfMonth -= 1
             } else {
@@ -61,8 +63,8 @@ class CustomWeekly {
         }
         Column(modifier = Modifier.padding(start = 10.dp, top = 200.dp)) {
             val array = ArrayList<DayOfWeekDTO>()
-            array.add(DayOfWeekDTO(0, dayOfMonth, month, year))
-            for (j in 1..6) {
+            array.add(DayOfWeekDTO(1, dayOfMonth, month, year))
+            for (j in 2..7) {
                 Spacer(modifier = Modifier.width(2.dp))
                 if (dayOfMonth < daysInMonth) {
                     dayOfMonth += 1
@@ -129,7 +131,7 @@ class CustomWeekly {
                 },
         ){
             Text(
-                text = "${getDayOfWeekName(dayOfWeek).toString()}\n${day}/${month}/${year}",
+                text = "${getDayOfWeekName(dayOfWeek).toString()}\n${day}/${month + 1}/${year}",
                 modifier = Modifier.padding(
                     start = 10.dp,
                     end = 0.dp,
